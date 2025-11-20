@@ -1,0 +1,94 @@
+services:
+  # === MESSAGE BROKER ===
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: griote-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # === DATABASE (GÉNÉRIQUE) ===
+  griote_db:
+    image: postgres:15
+    container_name: griote-db
+    environment:
+      POSTGRES_DB: griote_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - griote_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # === USER SERVICE ===
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: griote-user-service
+    ports:
+      - "3001:3000"
+    env_file:
+      - ./services/user-service/.env
+      - ./.env
+    depends_on:
+      - griote_db
+      - rabbitmq
+    restart: unless-stopped
+
+  # === DEPOT SERVICE ===
+  depot-service:
+    build:
+      context: ./services/depot-service
+      dockerfile: Dockerfile
+    container_name: griote-depot-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./services/depot-service/.env
+      - ./.env
+    depends_on:
+      - griote_db
+      - minio
+    restart: unless-stopped
+
+  # === STOCKAGE (MINIO - GRATUIT) ===
+  minio:
+    image: minio/minio
+    container_name: griote-minio
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+# === VOLUMES ===
+volumes:
+  griote_db_data:
+  minio_data:
