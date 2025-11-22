@@ -1,10 +1,10 @@
+# Griote Platform Backend
 
-# Griote Foundation Backend
-Backend des microservices pour la plateforme Griote Foundation.
+Backend des microservices pour la plateforme **Griote Platform**, dont l’objectif est d’harmoniser, centraliser et vulgariser la connaissance, tout en posant les bases d’une intelligence artificielle africaine adaptée au contexte local (**GrioteAI**).
 
 ## Table des matières
 
-- [Griote Foundation Backend](#griote-foundation-backend)
+- [Griote Platform Backend](#griote-platform-backend)
   - [Table des matières](#table-des-matières)
   - [Description](#description)
   - [Arborescence du projet](#arborescence-du-projet)
@@ -20,7 +20,7 @@ Backend des microservices pour la plateforme Griote Foundation.
 
 ## Description
 
-Ce projet backend est composé de plusieurs microservices indépendants (auth-service, profile-service, bases de données Postgres, RabbitMQ) orchestrés via Docker Compose. Chaque service utilise ses propres variables d’environnement et communique via RabbitMQ et bases Postgres.
+Ce backend regroupe plusieurs microservices indépendants (auth-service, profile-service, bases de données Postgres, RabbitMQ) orchestrés via Docker Compose. Il permet la gestion sécurisée des utilisateurs, le dépôt et la structuration des travaux académiques ou personnels, et la communication asynchrone entre services. Cette architecture soutient la mission de Griote Platform : rendre la connaissance accessible et exploitable pour tous, et préparer l’intégration future de GrioteAI.
 
 ---
 
@@ -72,11 +72,11 @@ sudo docker compose up --build
 
 ## Services
 
-* **auth-service** : gestion de l’authentification, JWT, connexion à la base authdb
-* **profile-service** : gestion des profils utilisateurs, connexion à la base profiledb
-* **db-auth** : base PostgreSQL pour auth-service
-* **db-profile** : base PostgreSQL pour profile-service
-* **rabbitmq** : broker RabbitMQ pour communication asynchrone
+* **auth-service** : gestion de l’authentification, JWT, connexion à la base authdb. Permet la création et la sécurisation des comptes utilisateurs.
+* **profile-service** : gestion des profils utilisateurs, connexion à la base profiledb. Permet la mise à jour des informations et l’organisation des dépôts de travaux.
+* **db-auth** : base PostgreSQL pour auth-service.
+* **db-profile** : base PostgreSQL pour profile-service.
+* **rabbitmq** : broker RabbitMQ pour communication asynchrone entre microservices.
 
 ---
 
@@ -109,9 +109,9 @@ Chaque microservice importe ses variables d’environnement via son `.env`. Les 
 
 ## Utilisation
 
-* Authentification disponible sur `http://localhost:3001/api/auth`
-* Profil utilisateur disponible sur `http://localhost:3002`
-* RabbitMQ Management UI accessible sur `http://localhost:15672` (guest/guest)
+* Authentification disponible sur `http://localhost:3001/api/auth` (inscription, connexion, gestion des comptes).
+* Profil utilisateur disponible sur `http://localhost:3002` (consultation, mise à jour, dépôt de travaux).
+* RabbitMQ Management UI accessible sur `http://localhost:15672` (guest/guest).
 
 ---
 
