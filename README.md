@@ -1,7 +1,3 @@
-Parfait ! Voici une **version réorganisée, minimaliste, professionnelle** de ton README avec **les badges que tu souhaites** et un texte plus soigné :
-
----
-
 # Griote Platform
 
 Open-source platform to centralize African knowledge and build **GrioteAI**, an artificial intelligence designed by and for Africa.
@@ -39,9 +35,7 @@ Griote Platform collects, structures, and preserves academic works, traditional 
 * Apply to themed scholarship programs
 * Document submission and real-time tracking
 
-### Upcoming Features
-
-* None at the moment
+---
 
 ## Technical Documentation
 
@@ -62,7 +56,7 @@ See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidance.
 
 MIT — see [LICENSE](LICENSE)
 
-
 ## Contact
 
 [contact@griote.org](mailto:contact@griote.org)
+
