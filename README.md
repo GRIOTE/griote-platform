@@ -7,11 +7,11 @@ Parfait ! Voici une **version réorganisée, minimaliste, professionnelle** de
 Open-source platform to centralize African knowledge and build **GrioteAI**, an artificial intelligence designed by and for Africa.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/griote-platform/griote?color=brightgreen)](https://github.com/griote-platform/griote/issues)
-[![GitHub contributors](https://img.shields.io/github/contributors/griote-platform/griote)](https://github.com/griote-platform/griote/graphs/contributors)
-[![GitHub stars](https://img.shields.io/github/stars/griote-platform/griote)](https://github.com/griote-platform/griote/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/griote-platform/griote)](https://github.com/griote-platform/griote/network)
-[![GitHub watchers](https://img.shields.io/github/watchers/griote-platform/griote)](https://github.com/griote-platform/griote/watchers)
+[![GitHub issues](https://img.shields.io/github/issues/GRIOTE/griote-platform?color=brightgreen)](https://github.com/GRIOTE/griote-platform/issues)
+[![GitHub contributors](https://img.shields.io/github/contributors/GRIOTE/griote-platform)](https://github.com/GRIOTE/griote-platform/graphs/contributors)
+[![GitHub stars](https://img.shields.io/github/stars/GRIOTE/griote-platform)](https://github.com/GRIOTE/griote-platform/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/GRIOTE/griote-platform)](https://github.com/GRIOTE/griote-platform/network)
+[![GitHub watchers](https://img.shields.io/github/watchers/GRIOTE/griote-platform)](https://github.com/GRIOTE/griote-platform/watchers)
 
 ---
 
