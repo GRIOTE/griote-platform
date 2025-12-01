@@ -1,69 +1,68 @@
-# Griote Platform
-
-Griote Platform est une plateforme numérique dont l’objectif ultime est de concevoir une intelligence artificielle "made in Africa", adaptée à notre contexte local et baptisée **GrioteAI**. La mission de Griote Platform est de centraliser, harmoniser et vulgariser la connaissance, qu’elle soit académique ou non, afin de la rendre accessible à tous.
-
-## Objectif
-
-- Concevoir une IA africaine, pertinente et adaptée à nos réalités : **GrioteAI**.
-- Centraliser et structurer les travaux académiques et personnels.
-- Rendre la connaissance accessible au public, dans et hors du milieu académique.
-- Faciliter la recherche et le partage de ressources.
-- Offrir un accès à des programmes de bourses alignés avec les axes de développement de Griote Platform.
-
-## Périmètre fonctionnel
-
-### 1. Espace utilisateur
-
-- Création et gestion de compte personnel.
-- Dépôt sécurisé de travaux académiques ou projets personnels (documents, ressources, archives de code).
-- Consultation et téléchargement des projets accessibles publiquement.
-- Historisation et organisation des dépôts.
-- Mise à jour du profil utilisateur.
-
-### 2. Accès aux programmes de bourses (M2 uniquement)
-
-- Espace dédié pour les étudiants en Master 2 et plus.
-- Candidature à des programmes de bourses selon des thématiques prioritaires.
-- Soumission de documents justificatifs.
-- Suivi et traitement des candidatures via une interface dédiée.
-
-## Règles générales de gestion
-
-- Authentification et espace personnel sécurisé pour chaque utilisateur.
-- Contrôle des droits d’accès sur les documents (public ou privé).
-- Critères d’éligibilité pour les candidatures aux bourses.
-- Téléchargement de ressources soumis à des règles d’accès (public, restreint, etc.).
-
-## Fonctions principales
-
-| Fonction                        | Description                                                                 |
-|----------------------------------|-----------------------------------------------------------------------------|
-| Gestion des comptes étudiants    | Inscription, connexion, mise à jour des informations, gestion du statut.    |
-| Dépôt de projet/documentation    | Envoi structuré de fichiers et ressources annexes.                          |
-| Visualisation et recherche       | Navigation par mots-clés, thématique, établissement ou date.                |
-| Téléchargement de ressources     | Accès autorisé selon les droits définis.                                    |
-| Candidature aux bourses (M2+)    | Soumission et suivi de dossier dans un espace dédié.                        |
-| Administration (à venir)         | Gestion des utilisateurs, modération, publication d'appels à projets.       |
-
-## Démarrage rapide
-
-1. Clonez le dépôt :
-   ```bash
-   git clone <url-du-repo>
-   ```
-2. Installez les dépendances :
-   ```bash
-   npm install
-   ```
-3. Lancez le projet :
-   ```bash
-   npm start
-   ```
-
-## Licence
-
-Ce projet est sous licence MIT.
+Parfait ! Voici une **version réorganisée, minimaliste, professionnelle** de ton README avec **les badges que tu souhaites** et un texte plus soigné :
 
 ---
 
-Pour toute question ou suggestion, contactez-nous à [contact@griote.org](mailto:contact@griote.org)
+# Griote Platform
+
+Open-source platform to centralize African knowledge and build **GrioteAI**, an artificial intelligence designed by and for Africa.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/griote-platform/griote?color=brightgreen)](https://github.com/griote-platform/griote/issues)
+[![GitHub contributors](https://img.shields.io/github/contributors/griote-platform/griote)](https://github.com/griote-platform/griote/graphs/contributors)
+[![GitHub stars](https://img.shields.io/github/stars/griote-platform/griote)](https://github.com/griote-platform/griote/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/griote-platform/griote)](https://github.com/griote-platform/griote/network)
+[![GitHub watchers](https://img.shields.io/github/watchers/griote-platform/griote)](https://github.com/griote-platform/griote/watchers)
+
+---
+
+## Overview
+
+Griote Platform collects, structures, and preserves academic works, traditional knowledge, code, datasets, and research produced in Africa. It provides a unified, open-access hub for this knowledge and serves as the primary data foundation for **GrioteAI**, a sovereign African large language model trained on African languages, cultures, and realities.
+
+**Vision:** Empower Africa with its own AI and knowledge infrastructure.
+
+---
+
+## Features
+
+### User Space
+
+* Account creation and secure authentication
+* Upload academic works, personal projects, source code, datasets
+* Public or private visibility control
+* Categorization, tagging, and full-text search
+* Download of public resources
+
+### Scholarship Module (Graduate Students)
+
+* Dedicated space for Master’s level and above
+* Apply to themed scholarship programs
+* Document submission and real-time tracking
+
+### Upcoming Features
+
+* None at the moment
+
+## Technical Documentation
+
+All technical documentation is available in the [Architecture](docs/ARCHITECTURE.md)
+
+
+## Running the Project
+
+Complete setup instructions, including Docker and local development, are available in [docs/SETUP.md](docs/SETUP.md).
+
+## Contributing
+
+We welcome contributions: code, documentation, bug reports, and ideas.
+See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidance.
+
+
+## License
+
+MIT — see [LICENSE](LICENSE)
+
+
+## Contact
+
+[contact@griote.org](mailto:contact@griote.org)

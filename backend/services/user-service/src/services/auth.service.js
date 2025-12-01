@@ -4,7 +4,7 @@ const { hashPassword, comparePassword, validatePasswordComplexity } = require('.
 const { signAccess, signRefresh, signEmail, verify } = require('../utils/token.util');
 const mailService = require('./mail.service');
 const rabbit = require('../events/rabbitmq.publisher');
-const logger = require('../config/logger');
+const logger = require('../../shared/config/logger');
 
 async function registerUserWithEmailToken(payload) {
   // Vérifier si l'email existe déjà

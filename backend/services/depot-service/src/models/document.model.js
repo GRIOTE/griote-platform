@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db.config');
+const sequelize = require('../../shared/config/db.config');
 
 const Document = sequelize.define('Document', {
   document_id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },

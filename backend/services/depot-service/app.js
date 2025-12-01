@@ -6,7 +6,7 @@ const tagRoutes = require('./src/routes/tag.routes');
 const documentRoutes = require('./src/routes/document.routes');
 const swaggerRouter = require('./src/swagger');
 const { sequelize } = require('./src/models');
-const logger = require('./src/config/logger');
+const logger = require('../../shared/config/logger');
 
 const app = express();
 

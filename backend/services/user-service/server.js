@@ -1,7 +1,7 @@
 require('dotenv').config({ debug: true });
 
 const { app, initDb } = require('./app');
-const logger = require('./src/config/logger');
+const logger = require('../../shared/config/logger');
 const rabbit = require('./src/events/rabbitmq.publisher');
 
 const PORT = process.env.PORT || 3000;

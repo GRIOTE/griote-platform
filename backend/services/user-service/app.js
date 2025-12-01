@@ -4,8 +4,8 @@ const authRoutes = require('./src/routes/auth.routes');
 const userRoutes = require('./src/routes/user.routes');
 const adminRoutes = require('./src/routes/admin.routes');
 const swaggerRouter = require('./src/swagger');
-const sequelize = require('./src/config/db.config');
-const logger = require('./src/config/logger');
+const sequelize = require('../../shared/config/db.config');
+const logger = require('../../shared/config/logger');
 
 const app = express();
 

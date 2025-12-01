@@ -1,4 +1,4 @@
-const sequelize = require('../config/db.config');
+const sequelize = require('../../shared/config/db.config');
 const Depot = require('./depot.model');
 const Document = require('./document.model');
 const DepotCategory = require('./depotCategory.model');

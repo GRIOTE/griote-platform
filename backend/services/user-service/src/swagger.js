@@ -37,7 +37,6 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
-// CHANGE ICI : MONTE SUR '/' DANS LE ROUTEUR
 router.use('/', swaggerUi.serve, swaggerUi.setup(specs));
 
 module.exports = router;

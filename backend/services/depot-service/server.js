@@ -1,7 +1,7 @@
 require('dotenv').config({ debug: true });
 const minioService = require('./src/services/minio.service');
 const { app, sequelize } = require('./app');
-const logger = require('./src/config/logger');
+const logger = require('../../shared/config/logger');
 
 const PORT = process.env.PORT || 3002;
 
