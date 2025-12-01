@@ -45,7 +45,7 @@ Griote Platform collects, structures, and preserves academic works, traditional 
 
 ## Technical Documentation
 
-All technical documentation is available in the [Architecture](docs/ARCHITECTURE.md)
+All technical documentation is available in the [docs/Architecture](docs/ARCHITECTURE.md)
 
 
 ## Running the Project
