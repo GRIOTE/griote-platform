@@ -1,29 +1,35 @@
 ## Contributing to Griote Platform
 
-Contributions are welcome, and we appreciate the time and effort you take to contribute to Griote Platform.
+Contributions are welcome — thank you for helping improve the project!
 
 ### Code of Conduct
 
-Before contributing, please read and sign our [Code of Conduct](CODE_OF_CONDUCT.md). This document outlines our expectations for contributor behavior.
+Please read and respect our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-### Submitting a Pull Request
+### How to submit a contribution
 
-1. Clone the repository: `git clone https://github.com/GRIOTE/griote-platform.git`
-2. Create a new branch: `git checkout -b <new-feature-or-fix>`
-3. Make changes and commit: `git commit -m "<commit-message>"`
-4. Push changes to GitHub: `git push origin <new-feature-or-fix>`
-5. Open a pull request: `https://github.com/GRIOTE/griote-platform/pulls`
+We only accept contributions via **Fork + Pull Request**  
+(no direct pushes or branches allowed on the main repository).
+
+**Important: before starting to code, first pick or create an issue**  
+(every Pull Request must reference or fix an existing issue).
+
+1. **Fork** the repository (top-right button on GitHub)
+2. Clone **your fork**: `git clone https://github.com/YOUR-USERNAME/griote-platform.git`
+3. Create a new branch: `git checkout -b my-feature-or-fix`
+4. Make changes and commit: `git commit -m "feat: add something cool"`
+5. Push to **your fork**: `git push origin my-feature-or-fix`
+6. Open a pull request from your fork → **develop** branch of `GRIOTE/griote-platform`  
+   (reference the issue in the title or description, e.g. `fix: login error (#42)`)
+
+All contributions must target the **develop** branch.
 
 ### Code Review
 
-All pull requests undergo code review. Our team will review your code for the following:
+Every Pull Request is reviewed for correctness, readability, performance, security, and code style.
 
-* Correctness
-* Readability
-* Performance
-* Security
-* Code style
+### Reporting Issues or Suggesting Features
 
-### Reporting Issues
+https://github.com/GRIOTE/griote-platform/issues
 
-If you encounter an issue with Griote Platform, please report it using the [GitHub Issues](https://github.com/GRIOTE/griote-platform/issues) page.
+Thank you!
