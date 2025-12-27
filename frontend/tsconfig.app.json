@@ -6,6 +6,8 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
+    "types": ["node"],
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -21,9 +23,9 @@
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
 
-    "baseUrl": ".",
+    "baseUrl": ".",                // ← juste un point, PAS "./"
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]             // ← sans le ./ devant src
     }
   },
   "include": ["src"]

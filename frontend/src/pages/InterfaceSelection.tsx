@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Settings, User, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/auth/useAuth';
 import grioteLogo from '@/assets/griote.svg';
 
 const InterfaceSelection = () => {

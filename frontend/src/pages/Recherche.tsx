@@ -5,7 +5,7 @@ import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import ProjectCard from '@/components/ProjectCard';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/auth/useAuth';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';

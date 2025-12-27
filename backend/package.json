@@ -1,0 +1,40 @@
+{
+  "name": "griote-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "swagger.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --verbose",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --verbose",
+    "test:unit": "jest tests/unit --verbose",
+    "test:integration": "npm run test:integration:real",
+"test:integration:real": "sudo docker compose -f compose.yaml -f compose.test.yaml up --remove-orphans --wait postgres-test && jest tests/integration --runInBand --forceExit && sudo docker compose -f compose.yaml -f compose.test.yaml down -v --remove-orphans"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "joi": "^18.0.2",
+    "jsonwebtoken": "^9.0.3",
+    "minio": "^8.0.6",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.11",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7",
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.18.3",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
+  }
+}

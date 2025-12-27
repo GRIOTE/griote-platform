@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import grioteLogo from '@/assets/griote.svg';
+import { toast } from 'sonner';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
+  const [resendEmail, setResendEmail] = useState('');
+  const [isResending, setIsResending] = useState(false);
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -110,16 +116,58 @@ const VerifyEmail = () => {
 
             {/* Error */}
             {status === 'error' && (
-              <div className="flex flex-col items-center justify-center py-8">
-                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                  <XCircle className="w-12 h-12 text-red-600" />
+              <div className="space-y-6">
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                    <XCircle className="w-12 h-12 text-red-600" />
+                  </div>
+                  <p className="text-red-600 text-center mb-2 font-medium">
+                    {message}
+                  </p>
+                  <p className="text-griote-gray-600 text-center text-sm">
+                    Si le problème persiste, vous pouvez demander un nouvel email de vérification.
+                  </p>
                 </div>
-                <p className="text-red-600 text-center mb-2 font-medium">
-                  {message}
-                </p>
-                <p className="text-griote-gray-600 text-center text-sm">
-                  Veuillez réessayer ou contacter le support si le problème persiste.
-                </p>
+
+                {/* Resend verification email form */}
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-medium text-griote-blue mb-4 text-center">
+                    Renvoyer l'email de vérification
+                  </h3>
+                  <form onSubmit={handleResendVerification} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="resendEmail" className="text-griote-blue font-medium">
+                        Adresse email
+                      </Label>
+                      <Input
+                        id="resendEmail"
+                        type="email"
+                        placeholder="votre@email.com"
+                        value={resendEmail}
+                        onChange={(e) => setResendEmail(e.target.value)}
+                        className="border-griote-accent focus:border-griote-blue"
+                        required
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full griote-button"
+                      disabled={isResending}
+                    >
+                      {isResending ? (
+                        <div className="flex items-center space-x-2">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Envoi en cours...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <Mail className="w-4 h-4" />
+                          <span>Renvoyer l'email</span>
+                        </div>
+                      )}
+                    </Button>
+                  </form>
+                </div>
               </div>
             )}
           </CardContent>
@@ -136,7 +184,8 @@ const VerifyEmail = () => {
             {status === 'error' && (
               <Button
                 onClick={() => navigate('/inscription')}
-                className="w-full griote-button"
+                variant="outline"
+                className="w-full"
               >
                 Retour à l'inscription
               </Button>

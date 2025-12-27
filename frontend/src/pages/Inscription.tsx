@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/auth/useAuth';
 import { toast } from 'sonner';
 import grioteLogo from '@/assets/griote.svg';
 
@@ -35,7 +35,7 @@ const Inscription = () => {
     setIsLoading(true);
     setError('');
 
-    // Validation
+    // Validation locale
     if (formData.password !== formData.confirmPassword) {
       setError('Les mots de passe ne correspondent pas');
       setIsLoading(false);
@@ -48,8 +48,7 @@ const Inscription = () => {
       return;
     }
 
-    // Vérifier la complexité du mot de passe
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/;
     if (!passwordRegex.test(formData.password)) {
       setError('Le mot de passe doit contenir au moins une majuscule, une minuscule, un chiffre et un caractère spécial (@$!%*?&)');
       setIsLoading(false);
@@ -57,56 +56,70 @@ const Inscription = () => {
     }
 
     try {
+      // Envoi payload complet pour le DTO
       await register({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
+        passwordConfirm: formData.confirmPassword, // ⚠️ Obligatoire pour Joi
+        role: 'USER', // optionnel mais cohérent
       });
 
       setSuccess(true);
       toast.success('Inscription réussie ! Veuillez vérifier votre email.');
-      
+
       setTimeout(() => {
         navigate('/connexion');
       }, 3000);
+
     } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue lors de l\'inscription');
-      toast.error(err.message || 'Erreur lors de l\'inscription');
+      // Gestion détaillée des erreurs Joi du backend
+      if (err.response?.data?.details) {
+        const messages = err.response.data.details
+          .map((d: any) => `${d.field}: ${d.message}`)
+          .join('\n');
+        setError(messages);
+        toast.error(messages);
+      } else {
+        setError(err.response?.data?.message || err.message || 'Une erreur est survenue');
+        toast.error(err.response?.data?.message || err.message || 'Erreur lors de l\'inscription');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-griote-blue to-griote-blue-dark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* Logo et titre */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-3 griote-hover">
-            <div className="w-12 h-12 bg-griote-white rounded-lg flex items-center justify-center p-2">
+          <Link to="/" className="inline-flex items-center space-x-3 hover:scale-105 transition-transform duration-300">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-lg">
               <img src={grioteLogo} alt="Logo Griote" className="w-full h-full" />
             </div>
-            <span className="text-2xl font-bold text-griote-white">
-              Fondation Griote
+            <span className="text-2xl font-bold text-white">
+              Griote Foundation
             </span>
           </Link>
-          <p className="text-griote-white/80 mt-4 text-lg">
+          <p className="text-white/90 mt-4 text-lg">
             Rejoignez la communauté des chercheurs africains
           </p>
         </div>
 
         {/* Formulaire d'inscription */}
-        <Card className="bg-griote-white border-griote-accent/20 shadow-2xl">
+        <Card className="bg-white border-yellow-200/50 shadow-2xl backdrop-blur-sm">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center text-griote-blue">
+            <CardTitle className="text-2xl text-center text-blue-800 font-bold">
               Créer un compte
             </CardTitle>
-            <CardDescription className="text-center text-griote-gray-800">
+            <CardDescription className="text-center text-gray-600">
               Remplissez les informations ci-dessous pour créer votre compte
             </CardDescription>
           </CardHeader>
-          
+
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               {success && (
@@ -128,36 +141,36 @@ const Inscription = () => {
               {/* Nom et Prénom */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-griote-blue font-medium">
+                  <Label htmlFor="firstName" className="text-blue-800 font-medium">
                     Prénom
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-griote-blue/60" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
                     <Input
                       id="firstName"
                       type="text"
                       placeholder="Votre prénom"
                       value={formData.firstName}
-                      onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      className="pl-12 border-griote-blue/20 focus:border-griote-accent focus:ring-griote-accent"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('firstName', e.target.value)}
+                      className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-griote-blue font-medium">
+                  <Label htmlFor="lastName" className="text-blue-800 font-medium">
                     Nom
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-griote-blue/60" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
                     <Input
                       id="lastName"
                       type="text"
                       placeholder="Votre nom"
                       value={formData.lastName}
-                      onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      className="pl-12 border-griote-blue/20 focus:border-griote-accent focus:ring-griote-accent"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('lastName', e.target.value)}
+                      className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
                       required
                     />
                   </div>
@@ -166,18 +179,18 @@ const Inscription = () => {
 
               {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-griote-blue font-medium">
+                <Label htmlFor="email" className="text-blue-800 font-medium">
                   Adresse e-mail
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-griote-blue/60" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="votre@email.com"
                     value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="pl-12 border-griote-blue/20 focus:border-griote-accent focus:ring-griote-accent"
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('email', e.target.value)}
+                    className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
                     required
                   />
                 </div>
@@ -186,52 +199,52 @@ const Inscription = () => {
               {/* Mots de passe */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-griote-blue font-medium">
+                  <Label htmlFor="password" className="text-blue-800 font-medium">
                     Mot de passe
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-griote-blue/60" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
                     <Input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Votre mot de passe"
                       value={formData.password}
-                      onChange={(e) => handleInputChange('password', e.target.value)}
-                      className="pl-12 pr-12 border-griote-blue/20 focus:border-griote-accent focus:ring-griote-accent"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('password', e.target.value)}
+                      className="pl-12 pr-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-griote-blue/60 hover:text-griote-blue"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  <p className="text-xs text-griote-gray-600">
+                  <p className="text-xs text-gray-500">
                     Min. 8 caractères avec majuscule, minuscule, chiffre et symbole
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-griote-blue font-medium">
+                  <Label htmlFor="confirmPassword" className="text-blue-800 font-medium">
                     Confirmer le mot de passe
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-griote-blue/60" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
                     <Input
                       id="confirmPassword"
                       type={showConfirmPassword ? 'text' : 'password'}
                       placeholder="Confirmez votre mot de passe"
                       value={formData.confirmPassword}
-                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-12 pr-12 border-griote-blue/20 focus:border-griote-accent focus:ring-griote-accent"
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('confirmPassword', e.target.value)}
+                      className="pl-12 pr-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-griote-blue/60 hover:text-griote-blue"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
                     >
                       {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
@@ -243,12 +256,12 @@ const Inscription = () => {
             <CardFooter className="flex flex-col space-y-4">
               <Button
                 type="submit"
-                className="w-full griote-button"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-semibold py-3 rounded-lg transition-colors duration-300"
                 disabled={isLoading || success}
               >
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-griote-blue border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
                     <span>Création du compte...</span>
                   </div>
                 ) : (
@@ -256,11 +269,11 @@ const Inscription = () => {
                 )}
               </Button>
 
-              <div className="text-center text-sm text-griote-gray-800">
+              <div className="text-center text-sm text-gray-700">
                 Vous avez déjà un compte ?{' '}
                 <Link
                   to="/connexion"
-                  className="text-griote-blue hover:text-griote-blue-dark font-medium transition-colors"
+                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                 >
                   Se connecter
                 </Link>
@@ -273,7 +286,7 @@ const Inscription = () => {
         <div className="text-center mt-6">
           <Link
             to="/"
-            className="text-griote-white/80 hover:text-griote-accent transition-colors text-sm"
+            className="text-white/80 hover:text-yellow-400 transition-colors text-sm"
           >
             ← Retour à l'accueil
           </Link>

@@ -3,7 +3,7 @@ import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import AnnouncementsSection from '@/components/AnnouncementsSection';
 import { Announcement } from '@/components/AnnouncementCard';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/auth/useAuth';
 
 // Extended mock data pour la page complète
 const allAnnouncements: Announcement[] = [

@@ -1,0 +1,17 @@
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: griote-postgres-test
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+      POSTGRES_DB: griote_test
+    ports:
+      - "5433:5432"
+    tmpfs: /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testuser -d griote_test -h 127.0.0.1"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+      start_period: 2s

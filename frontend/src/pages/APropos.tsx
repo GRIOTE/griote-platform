@@ -4,7 +4,7 @@ import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import { BookOpen, Users, Target, Heart, Globe, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/auth/useAuth';
 import { Link } from 'react-router-dom';
 
 const APropos = () => {
@@ -46,6 +46,43 @@ const APropos = () => {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Sub-navigation */}
+        <section className="py-12 bg-griote-accent/5">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Link to="/a-propos/cest-quoi-griote" className="block">
+                <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow text-center">
+                  <div className="w-12 h-12 bg-griote-accent rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">❓</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-griote-blue mb-2">C'est quoi Griote Foundation</h3>
+                  <p className="text-griote-gray-800 text-sm">Découvrez notre mission et notre vision</p>
+                </div>
+              </Link>
+
+              <Link to="/a-propos/bureau-executif" className="block">
+                <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow text-center">
+                  <div className="w-12 h-12 bg-griote-accent rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">🏢</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-griote-blue mb-2">Bureau Exécutif</h3>
+                  <p className="text-griote-gray-800 text-sm">Rencontrez l'équipe dirigeante</p>
+                </div>
+              </Link>
+
+              <Link to="/a-propos/contributeurs" className="block">
+                <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow text-center">
+                  <div className="w-12 h-12 bg-griote-accent rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">👥</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-griote-blue mb-2">Contributeurs</h3>
+                  <p className="text-griote-gray-800 text-sm">Découvrez notre communauté d'experts</p>
+                </div>
+              </Link>
             </div>
           </div>
         </section>
@@ -161,6 +198,74 @@ const APropos = () => {
                 <p className="text-griote-accent/80">
                   Faire reconnaître l'excellence académique africaine sur la scène internationale.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Du bureau & contributeurs */}
+        <section className="py-16 bg-griote-blue bg-bogolan">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-griote-accent mb-6">
+                Du bureau & contributeurs
+              </h2>
+              <p className="text-xl text-griote-accent/80 max-w-3xl mx-auto">
+                Découvrez l'équipe derrière Griote Foundation et nos contributeurs
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Link to="/a-propos/bureau-executif" className="block text-center animate-fade-in hover:opacity-80 transition-opacity">
+                <div className="w-20 h-20 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <span className="text-4xl">🏢</span>
+                </div>
+                <h3 className="text-xl font-semibold text-griote-accent mb-4">
+                  Notre Bureau
+                </h3>
+                <p className="text-griote-accent/80">
+                  L'équipe dirigeante et opérationnelle qui pilote la vision de Griote Foundation.
+                </p>
+              </Link>
+
+              <Link to="/a-propos/contributeurs" className="block text-center animate-fade-in hover:opacity-80 transition-opacity" style={{ animationDelay: '0.2s' }}>
+                <div className="w-20 h-20 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <span className="text-4xl">👥</span>
+                </div>
+                <h3 className="text-xl font-semibold text-griote-accent mb-4">
+                  Nos Contributeurs
+                </h3>
+                <p className="text-griote-accent/80">
+                  La communauté d'académiciens, développeurs et partenaires qui enrichissent notre écosystème.
+                </p>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* À propos de nous */}
+        <section className="py-16 bg-griote-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl font-bold text-griote-blue mb-8">
+                À propos de nous
+              </h2>
+
+              <div className="bg-gradient-to-r from-griote-blue/5 to-griote-accent/5 rounded-3xl p-8 md:p-12">
+                <p className="text-lg text-griote-gray-800 leading-relaxed mb-6">
+                  Griote Foundation est une initiative panafricaine dédiée à la valorisation et à la diffusion des savoirs académiques africains.
+                  Nous croyons que le continent africain possède un trésor inestimable de connaissances qui mérite d'être partagé avec le monde entier.
+                </p>
+
+                <p className="text-lg text-griote-gray-800 leading-relaxed mb-8">
+                  Notre mission est de créer un écosystème numérique inclusif où les chercheurs, étudiants et professionnels africains peuvent
+                  déposer leurs travaux, accéder aux opportunités et contribuer à l'innovation technologique à travers Griote AI.
+                </p>
+
+                <blockquote className="text-2xl font-light text-griote-blue italic mb-6">
+                  "L'avenir de l'Afrique se construit sur les fondations solides de ses savoirs ancestraux et contemporains."
+                </blockquote>
+                <cite className="text-griote-gray-800/70">— Griote Foundation</cite>
               </div>
             </div>
           </div>
