@@ -36,30 +36,20 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        background: '#ffffff',
+        background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
-
-
-
-
-
         primary: {
-          DEFAULT: '#4072ce',
-          foreground: '#ffffff'
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))'
         },
         secondary: {
-          DEFAULT: '#6C7A89',
-          foreground: '#ffffff'
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))'
         },
         accent: {
-          DEFAULT: '#FFCD1A',
-          foreground: '#020B18'
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))'
         },
-
-
-
-
-        
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))'

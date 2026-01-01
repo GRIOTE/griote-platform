@@ -34,8 +34,8 @@ describe('User Controller - Unit Tests', () => {
       // Assert
       expect(userService.getFullProfile).toHaveBeenCalledWith(1);
       expect(userService.getFullProfile).toHaveBeenCalledTimes(1);
+      expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(fullProfile);
-      expect(res.status).not.toHaveBeenCalled();
     });
 
     it('devrait retourner 404 si utilisateur non trouvé', async () => {
@@ -103,8 +103,8 @@ describe('User Controller - Unit Tests', () => {
         last_name: 'UpdatedLastName'
       });
       expect(userService.updateFullProfile).toHaveBeenCalledTimes(1);
+      expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(updatedProfile);
-      expect(res.status).not.toHaveBeenCalled();
     });
 
     it('devrait retourner 400 si données invalides', async () => {

@@ -1,16 +1,20 @@
+// src/utils/password.util.js
 const bcrypt = require('bcrypt');
 const logger = require('../config/logger.config');
 
 async function hashPassword(plain) {
+  // Validation AVANT le try/catch pour propager l'erreur correctement
+  if (!plain || typeof plain !== 'string') {
+    throw new Error('Le mot de passe doit être une chaîne de caractères valide');
+  }
+
   try {
-    if (!plain || typeof plain !== 'string') {
-      throw new Error('Le mot de passe doit être une chaîne de caractères valide');
-    }
+    // Utiliser let au lieu de const pour pouvoir réassigner
+    let saltRounds = parseInt(process.env.BCRYPT_SALT || '10', 10);
     
-    const saltRounds = parseInt(process.env.BCRYPT_SALT || '10', 10);
     if (isNaN(saltRounds) || saltRounds < 10 || saltRounds > 12) {
       logger.warn('Valeur BCRYPT_SALT invalide, utilisation de la valeur par défaut: 10');
-      const saltRounds = 10;
+      saltRounds = 10;
     }
     
     const hashedPassword = await bcrypt.hash(plain, saltRounds);
@@ -43,8 +47,8 @@ function validatePasswordComplexity(password) {
     return false;
   }
   
-  // Au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  //A u moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
   return passwordRegex.test(password);
 }
 

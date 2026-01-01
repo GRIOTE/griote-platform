@@ -56,8 +56,8 @@ services:
       minio:
         condition: service_healthy
     volumes:
-      - .:/app                            # hot-reload en dev (tu peux enlever en prod)
-      - /app/node_modules                 # évite d'écraser node_modules
+      - .:/usr/src/app                            # hot-reload en dev (tu peux enlever en prod)
+      - /usr/src/app/node_modules                 # évite d'écraser node_modules
 
 # ====================== VOLUMES ======================
 volumes:

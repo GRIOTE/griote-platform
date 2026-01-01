@@ -1,7 +1,5 @@
-class RequestPasswordResetDTO {
-  constructor({ email }) {
-    this.email = email;
-  }
+function requestPasswordResetDTO({ email }) {
+  return { email };
 }
 
-module.exports = RequestPasswordResetDTO;
+module.exports = requestPasswordResetDTO;

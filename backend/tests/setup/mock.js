@@ -1,5 +1,3 @@
-// tests/setup/mock.js
-
 /**
  * Crée un mock de requête Express
  */
@@ -10,6 +8,7 @@ const mockRequest = (overrides = {}) => {
     params: {},
     headers: {},
     user: null,
+    cookies: {},
     file: null,
     files: null,
     ...overrides
@@ -26,6 +25,8 @@ const mockResponse = () => {
   res.send = jest.fn().mockReturnValue(res);
   res.sendStatus = jest.fn().mockReturnValue(res);
   res.redirect = jest.fn().mockReturnValue(res);
+  res.cookie = jest.fn().mockReturnValue(res);       // ✅ ajouté
+  res.clearCookie = jest.fn().mockReturnValue(res);  // ✅ ajouté
   return res;
 };
 

@@ -1,141 +1,65 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Settings, User, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/auth/useAuth';
-import grioteLogo from '@/assets/griote.svg';
+// src/pages/InterfaceSelection.tsx
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 
 const InterfaceSelection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handleAdminInterface = () => {
-    navigate('/admin/dashboard');
+  console.log("InterfaceSelection rendered, user:", user);
+
+  const handleAdminSelection = () => {
+    navigate("/admin");
   };
 
-  const handleClientInterface = () => {
-    navigate('/');
+  const handleUserSelection = () => {
+    navigate("/mon-compte");
   };
 
   if (!user || user.role !== 'ADMIN') {
-    navigate('/connexion');
+    console.log("Redirecting to home, user:", user);
+    navigate("/");
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-griote-blue to-griote-blue-dark flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        {/* Header */}
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-3 mb-4">
-            <div className="w-12 h-12 bg-griote-white rounded-lg flex items-center justify-center p-2">
-              <img src={grioteLogo} alt="Logo Griote" className="w-full h-full" />
-            </div>
-            <span className="text-2xl font-bold text-griote-white">
-              Fondation Griote
-            </span>
-          </div>
-          <h1 className="text-3xl font-bold text-griote-white mb-2">
-            Bienvenue, {user.first_name} {user.last_name}
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Sélection d'interface
           </h1>
-          <p className="text-griote-white/80 text-lg">
-            Choisissez l'interface que vous souhaitez utiliser
+          <p className="text-gray-600">
+            Bienvenue {user.first_name} {user.last_name}. Choisissez l'interface que vous souhaitez utiliser.
           </p>
         </div>
 
-        {/* Interface Selection Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Admin Interface Card */}
-          <Card className="bg-griote-white border-griote-accent/20 shadow-2xl hover:shadow-3xl transition-all duration-300 cursor-pointer group">
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-griote-accent to-griote-blue rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Settings className="w-8 h-8 text-griote-white" />
-              </div>
-              <CardTitle className="text-2xl text-griote-blue">
-                Interface d'Administration
-              </CardTitle>
-              <CardDescription className="text-griote-gray-800">
-                Gérez la plateforme, les utilisateurs et le contenu
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-2 text-griote-gray-800">
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-accent rounded-full"></div>
-                  <span>Gestion des utilisateurs</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-accent rounded-full"></div>
-                  <span>Administration du contenu</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-accent rounded-full"></div>
-                  <span>Statistiques et rapports</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-accent rounded-full"></div>
-                  <span>Configuration système</span>
-                </li>
-              </ul>
-              <Button 
-                onClick={handleAdminInterface}
-                className="w-full griote-button group-hover:bg-griote-blue-dark transition-colors duration-300"
-              >
-                Accéder à l'administration
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="space-y-4">
+          <div className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
+            <h2 className="text-xl font-semibold mb-2">Interface Administrateur</h2>
+            <p className="text-gray-600 mb-4">
+              Accédez au panneau d'administration pour gérer les utilisateurs et le système.
+            </p>
+            <button
+              onClick={handleAdminSelection}
+              className="w-full bg-primary text-white py-2 px-4 rounded hover:bg-blue-700"
+            >
+              Accéder à l'administration
+            </button>
+          </div>
 
-          {/* Client Interface Card */}
-          <Card className="bg-griote-white border-griote-accent/20 shadow-2xl hover:shadow-3xl transition-all duration-300 cursor-pointer group">
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-griote-blue to-griote-blue-dark rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <User className="w-8 h-8 text-griote-white" />
-              </div>
-              <CardTitle className="text-2xl text-griote-blue">
-                Espace Client
-              </CardTitle>
-              <CardDescription className="text-griote-gray-800">
-                Utilisez la plateforme comme un utilisateur standard
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-2 text-griote-gray-800">
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-blue rounded-full"></div>
-                  <span>Parcourir les annonces</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-blue rounded-full"></div>
-                  <span>Publier du contenu</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-blue rounded-full"></div>
-                  <span>Interagir avec la communauté</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-griote-blue rounded-full"></div>
-                  <span>Gérer votre profil</span>
-                </li>
-              </ul>
-              <Button 
-                onClick={handleClientInterface}
-                className="w-full bg-griote-blue hover:bg-griote-blue-dark text-griote-white transition-colors duration-300"
-              >
-                Accéder à l'espace client
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-griote-white/60 text-sm">
-            Vous pourrez toujours changer d'interface depuis votre profil
-          </p>
+          <div className="border rounded-lg p-4 hover:shadow-lg transition-shadow">
+            <h2 className="text-xl font-semibold mb-2">Interface Utilisateur</h2>
+            <p className="text-gray-600 mb-4">
+              Accédez à votre espace personnel pour gérer vos dépôts et documents.
+            </p>
+            <button
+              onClick={handleUserSelection}
+              className="w-full bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700"
+            >
+              Accéder à mon compte
+            </button>
+          </div>
         </div>
       </div>
     </div>

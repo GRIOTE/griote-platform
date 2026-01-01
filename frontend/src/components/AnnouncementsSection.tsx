@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ArrowRight, Filter, Search } from 'lucide-react';
+import { ArrowRight, Filter, Search, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import AnnouncementCard, { Announcement } from './AnnouncementCard';
+import { announcementService } from '@/services/announcement.service';
 
 interface AnnouncementsSectionProps {
-  announcements: Announcement[];
+  announcements?: Announcement[];
   maxDisplay?: number;
   showFilters?: boolean;
   title?: string;
@@ -112,7 +113,7 @@ const AnnouncementsSection = ({
                   type="text"
                   placeholder="Rechercher une annonce..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.FormEvent<HTMLFormElement>) => setSearchTerm(e.target.value)}
                   className="pl-10 border-griote-gray-100 focus:border-griote-blue"
                 />
               </div>
@@ -122,7 +123,7 @@ const AnnouncementsSection = ({
                 <Filter className="w-4 h-4 text-griote-gray-600" />
                 <select
                   value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value)}
+                  onChange={(e: React.FormEvent<HTMLFormElement>) => setSelectedType(e.target.value)}
                   className="px-3 py-2 border border-griote-gray-100 rounded-md focus:outline-none focus:border-griote-blue bg-griote-white"
                 >
                   {announcementTypes.map((type) => (

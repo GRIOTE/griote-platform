@@ -23,9 +23,9 @@ export default function App() {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              <Route path="/*" element={<PublicRoutes />} />
-              <Route path="/user/*" element={<UserRoutes />} />
+              <Route path="/mon-compte/*" element={<UserRoutes />} />
               <Route path="/admin/*" element={<AdminRoutes />} />
+              <Route path="/*" element={<PublicRoutes />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

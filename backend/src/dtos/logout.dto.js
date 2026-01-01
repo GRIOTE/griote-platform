@@ -1,7 +1,5 @@
-class LogoutDTO {
-  constructor({ refreshToken }) {
-    this.refreshToken = refreshToken;
-  }
+function logoutDTO({ refreshToken }) {
+  return { refreshToken };
 }
 
-module.exports = LogoutDTO;
+module.exports = logoutDTO;

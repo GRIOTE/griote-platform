@@ -185,7 +185,7 @@ const Recherche = () => {
                 type="text"
                 placeholder="Rechercher par titre, description ou tags..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e: React.FormEvent<HTMLFormElement>) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-griote-white border-2 border-griote-accent rounded-lg text-lg focus:outline-none focus:border-griote-accent text-griote-gray-800"
               />
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-griote-accent" />

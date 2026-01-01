@@ -3,20 +3,20 @@ import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import { Users, Code, BookOpen, Heart, Github, Linkedin, Mail } from 'lucide-react';
 import { useAuth } from '@/auth/useAuth';
+import { Card } from '@/components/ui/card';
+import { Button } from '../components/ui/button';
 
 const Contributeurs = () => {
   const { isAuthenticated, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-  };
+  const handleLogout = () => logout();
 
   const contributors = [
     {
       name: "Dr. Kofi Mensah",
       role: "Chercheur en IA",
       contribution: "Développement de Griote AI et algorithmes de recommandation",
-      image: "👨‍🔬",
+      image: "/images/kofi.jpg",
       expertise: "Intelligence Artificielle",
       social: { github: "kofi-ai", linkedin: "kofi-mensah", email: "kofi@griote.foundation" }
     },
@@ -24,7 +24,7 @@ const Contributeurs = () => {
       name: "Ing. Nia Sow",
       role: "Développeuse Full-Stack",
       contribution: "Architecture de la plateforme et développement frontend/backend",
-      image: "👩‍💻",
+      image: "/images/nia.jpg",
       expertise: "Développement Web",
       social: { github: "nia-dev", linkedin: "nia-sow", email: "nia@griote.foundation" }
     },
@@ -32,7 +32,7 @@ const Contributeurs = () => {
       name: "Prof. Jean-Baptiste Nkurunziza",
       role: "Expert en Éducation",
       contribution: "Conception pédagogique et validation des contenus académiques",
-      image: "👨‍🏫",
+      image: "/images/jb.jpg",
       expertise: "Pédagogie",
       social: { linkedin: "jb-nkurunziza", email: "jb@griote.foundation" }
     },
@@ -40,7 +40,7 @@ const Contributeurs = () => {
       name: "Dr. Zainab Okafor",
       role: "Designer UX/UI",
       contribution: "Design de l'interface utilisateur et expérience utilisateur",
-      image: "👩‍🎨",
+      image: "/images/zainab.jpg",
       expertise: "Design UX/UI",
       social: { linkedin: "zainab-okafor", email: "zainab@griote.foundation" }
     },
@@ -48,7 +48,7 @@ const Contributeurs = () => {
       name: "M. Ahmed Hassan",
       role: "Spécialiste DevOps",
       contribution: "Infrastructure cloud et déploiement automatisé",
-      image: "👨‍🔧",
+      image: "/images/ahmed.jpg",
       expertise: "DevOps & Cloud",
       social: { github: "ahmed-devops", linkedin: "ahmed-hassan", email: "ahmed@griote.foundation" }
     },
@@ -56,157 +56,92 @@ const Contributeurs = () => {
       name: "Dr. Mariam Diallo",
       role: "Ethnologue",
       contribution: "Recherche sur les traditions orales africaines et validation culturelle",
-      image: "👩‍🎓",
+      image: "/images/mariam.jpg",
       expertise: "Ethnologie",
       social: { linkedin: "mariam-diallo", email: "mariam@griote.foundation" }
     }
   ];
 
   return (
-    <div className="min-h-screen bg-griote-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
 
       <main>
         {/* Hero Section */}
-        <section className="bg-griote-blue bg-bogolan py-16">
-          <div className="container mx-auto px-4">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-griote-accent mb-6">
-                Nos Contributeurs
-              </h1>
-              <p className="text-xl text-griote-accent/80 max-w-3xl mx-auto">
-                La communauté d'experts qui enrichit et fait vivre Griote Foundation
-              </p>
-            </div>
+        <section className="bg-gradient-to-br from-primary to-blue-900 py-28 text-center relative">
+          <div className="absolute inset-0 opacity-10">
+            <img 
+              src="https://img.freepik.com/free-vector/ethnic-seamless-pattern-background-black-white-aztec-design-vector_53876-154221.jpg"
+              alt="Motif culturel africain"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="relative z-10 max-w-5xl mx-auto px-4">
+            <h1 className="text-5xl lg:text-6xl font-extrabold text-white mb-6">Nos Contributeurs</h1>
+            <p className="text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+              Découvrez la communauté d’experts qui enrichit Griote Project-Africa avec savoir, technologie et passion.
+            </p>
           </div>
         </section>
 
-        {/* Rôle des Contributeurs */}
-        <section className="py-16 bg-griote-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-griote-blue mb-8 text-center flex items-center justify-center">
-                <Heart className="w-8 h-8 mr-3 text-griote-accent" />
-                Le Rôle des Contributeurs
-              </h2>
+        {/* Rôle des contributeurs */}
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4 max-w-7xl text-center mb-16">
+            <h2 className="text-4xl font-bold mb-6">Le Rôle des Contributeurs</h2>
+            <p className="text-lg text-foreground/70 max-w-4xl mx-auto mb-12">
+              La valeur ajoutée de nos contributeurs repose sur l’innovation technique, l’expertise académique et la construction d’une communauté dynamique.
+            </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Code className="w-8 h-8 text-griote-blue" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-griote-blue mb-3">Innovation Technique</h3>
-                  <p className="text-griote-gray-800">
-                    Développement technologique et amélioration continue de la plateforme.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <BookOpen className="w-8 h-8 text-griote-blue" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-griote-blue mb-3">Expertise Académique</h3>
-                  <p className="text-griote-gray-800">
-                    Validation des contenus et enrichissement du savoir académique africain.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-8 h-8 text-griote-blue" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-griote-blue mb-3">Communauté</h3>
-                  <p className="text-griote-gray-800">
-                    Construction d'une communauté solidaire d'académiciens africains.
-                  </p>
-                </div>
+            <div className="grid md:grid-cols-3 gap-12">
+              <div className="flex flex-col items-center">
+                <Code className="w-12 h-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Innovation Technique</h3>
+                <p className="text-foreground/80 text-center">Développement technologique et amélioration continue de la plateforme.</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <BookOpen className="w-12 h-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Expertise Académique</h3>
+                <p className="text-foreground/80 text-center">Validation des contenus et enrichissement du savoir académique africain.</p>
+              </div>
+              <div className="flex flex-col items-center">
+                <Users className="w-12 h-12 text-primary mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Communauté</h3>
+                <p className="text-foreground/80 text-center">Construction d'une communauté solidaire d'académiciens africains.</p>
               </div>
             </div>
           </div>
-        </section>
 
-        {/* Équipe des Contributeurs */}
-        <section className="py-16 bg-griote-blue bg-kente">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-griote-accent mb-6">
-                Équipe des Contributeurs
-              </h2>
-              <p className="text-xl text-griote-accent/80 max-w-3xl mx-auto">
-                Découvrez les talents qui font avancer Griote Foundation
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {contributors.map((contributor, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-                  <div className="text-center mb-4">
-                    <div className="w-16 h-16 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
-                      {contributor.image}
-                    </div>
-                    <h3 className="text-xl font-semibold text-griote-accent mb-1">
-                      {contributor.name}
-                    </h3>
-                    <p className="text-griote-accent/80 font-medium mb-2">
-                      {contributor.role}
-                    </p>
-                    <span className="inline-block bg-griote-accent/20 text-griote-accent px-3 py-1 rounded-full text-sm">
-                      {contributor.expertise}
-                    </span>
-                  </div>
-
-                  <p className="text-griote-accent/70 text-sm mb-4 text-center">
-                    {contributor.contribution}
-                  </p>
-
-                  <div className="flex justify-center space-x-3">
-                    {contributor.social.github && (
-                      <a href={`https://github.com/${contributor.social.github}`} className="text-griote-accent/60 hover:text-griote-accent transition-colors">
-                        <Github className="w-5 h-5" />
-                      </a>
-                    )}
-                    {contributor.social.linkedin && (
-                      <a href={`https://linkedin.com/in/${contributor.social.linkedin}`} className="text-griote-accent/60 hover:text-griote-accent transition-colors">
-                        <Linkedin className="w-5 h-5" />
-                      </a>
-                    )}
-                    <a href={`mailto:${contributor.social.email}`} className="text-griote-accent/60 hover:text-griote-accent transition-colors">
-                      <Mail className="w-5 h-5" />
-                    </a>
-                  </div>
+          {/* Liste des contributeurs */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
+            {contributors.map((c, i) => (
+              <Card key={i} className="p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all">
+                <img src={c.image} alt={c.name} className="w-32 h-32 rounded-full mx-auto mb-6 object-cover" />
+                <h3 className="text-2xl font-bold mb-2 text-center">{c.name}</h3>
+                <p className="text-primary font-semibold text-center mb-2">{c.role}</p>
+                <p className="text-foreground/80 text-center mb-4">{c.expertise}</p>
+                <p className="text-foreground/70 text-center mb-4">{c.contribution}</p>
+                <div className="flex justify-center space-x-4">
+                  {c.social.github && <a href={`https://github.com/${c.social.github}`} className="text-primary hover:underline">GitHub</a>}
+                  {c.social.linkedin && <a href={`https://linkedin.com/in/${c.social.linkedin}`} className="text-primary hover:underline">LinkedIn</a>}
+                  <a href={`mailto:${c.social.email}`} className="text-primary hover:underline">Email</a>
                 </div>
-              ))}
-            </div>
+              </Card>
+            ))}
           </div>
         </section>
 
-        {/* Devenir Contributeur */}
-        <section className="py-16 bg-griote-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl font-bold text-griote-blue mb-6">
-                Devenir Contributeur
-              </h2>
-              <p className="text-lg text-griote-gray-800 mb-8">
-                Vous souhaitez contribuer au développement de Griote Foundation ?
-                Rejoignez notre communauté d'experts et participez à la valorisation des savoirs africains.
-              </p>
-              <div className="bg-gradient-to-r from-griote-blue/5 to-griote-accent/5 rounded-2xl p-8">
-                <p className="text-griote-blue font-medium mb-4">
-                  Nous recherchons des profils dans les domaines suivants :
-                </p>
-                <div className="flex flex-wrap justify-center gap-3">
-                  <span className="bg-griote-accent/10 text-griote-accent px-4 py-2 rounded-full text-sm">Intelligence Artificielle</span>
-                  <span className="bg-griote-accent/10 text-griote-accent px-4 py-2 rounded-full text-sm">Développement Web</span>
-                  <span className="bg-griote-accent/10 text-griote-accent px-4 py-2 rounded-full text-sm">Design UX/UI</span>
-                  <span className="bg-griote-accent/10 text-griote-accent px-4 py-2 rounded-full text-sm">DevOps</span>
-                  <span className="bg-griote-accent/10 text-griote-accent px-4 py-2 rounded-full text-sm">Recherche Académique</span>
-                </div>
-                <a href="mailto:contribute@griote.foundation" className="inline-block mt-6 bg-griote-accent text-griote-blue px-6 py-3 rounded-lg font-semibold hover:bg-griote-accent/90 transition-colors">
-                  Nous Contacter
-                </a>
-              </div>
-            </div>
+        {/* Call to Action */}
+        <section className="py-24 bg-gradient-to-br from-primary to-blue-900 text-center">
+          <div className="max-w-3xl mx-auto px-4">
+            <h2 className="text-4xl lg:text-5xl font-extrabold text-white mb-6">Devenir Contributeur</h2>
+            <p className="text-xl text-white/90 mb-8">
+              Rejoignez notre communauté d’experts et participez à la valorisation des savoirs africains.
+            </p>
+            <Button asChild>
+              <a href="mailto:contribute@griote.foundation" className="px-12 py-5 bg-accent text-white font-semibold rounded-lg hover:bg-accent/90">
+                Nous Contacter
+              </a>
+            </Button>
           </div>
         </section>
       </main>

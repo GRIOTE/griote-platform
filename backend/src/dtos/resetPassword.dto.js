@@ -1,8 +1,5 @@
-class ResetPasswordDTO {
-  constructor({ token, newPassword }) {
-    this.token = token;
-    this.newPassword = newPassword;
-  }
+function resetPasswordDTO({ token, newPassword }) {
+  return { token, newPassword };
 }
 
-module.exports = ResetPasswordDTO;
+module.exports = resetPasswordDTO;

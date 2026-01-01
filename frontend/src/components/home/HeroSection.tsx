@@ -27,7 +27,7 @@ export const HeroSection = () => {
             <div className="space-y-6">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight">
                 Bâtir la souveraineté africaine<br />
-                <span className="text-blue-600 underline underline-offset-4 decoration-accent decoration-2">à partir de nos propres savoirs</span>
+                <span className="text-primary underline underline-offset-4 decoration-accent decoration-2">à partir de nos propres savoirs</span>
               </h1>
 
 
@@ -60,7 +60,7 @@ export const HeroSection = () => {
               <img
                 src={grioteImage}
                 alt="Sage africain - Gardien de la tradition orale"
-                className="w-full h-auto rounded-2xl shadow-2xl border-4 border-blue-600/20 object-cover"
+                className="w-full h-auto rounded-2xl shadow-2xl border-4 border-primary/20 object-cover"
                 style={{
                   filter: "sepia(8%) saturate(130%) brightness(105%) contrast(108%)",
                 }}

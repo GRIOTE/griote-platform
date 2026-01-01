@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/auth/useAuth';
-import { authService } from '@/services/auth.service';
+
+import {resendVerificationEmail} from '@/services/auth.service'
 import { toast } from 'sonner';
 import grioteLogo from '@/assets/griote.svg';
 
@@ -34,8 +35,8 @@ const Connexion = () => {
       if (response.requiresInterfaceSelection) {
         navigate('/interface-selection');
       } else {
-        // Regular user, redirect to home
-        navigate('/');
+        // Regular user, redirect to account page
+        navigate('/mon-compte');
       }
     } catch (err: any) {
       const code = err.response?.data?.code;
@@ -54,7 +55,7 @@ const Connexion = () => {
   const handleResend = async () => {
     setResendLoading(true);
     try {
-      await authService.resendVerificationEmail(email);
+      await resendVerificationEmail(email);
       toast.success('Email de vérification envoyé avec succès');
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erreur lors de l\'envoi de l\'email');
@@ -64,7 +65,7 @@ const Connexion = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary via-blue-700 to-blue-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo et titre */}
         <div className="text-center mb-8">
@@ -156,7 +157,7 @@ const Connexion = () => {
                 </div>
                 <Link
                   to="/mot-de-passe-oublie"
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                  className="text-sm text-primary hover:text-blue-800 transition-colors"
                 >
                   Mot de passe oublié ?
                 </Link>
@@ -183,7 +184,7 @@ const Connexion = () => {
                 Vous n'avez pas de compte ?{' '}
                 <Link
                   to="/inscription"
-                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                  className="text-primary hover:text-blue-800 font-medium transition-colors"
                 >
                   Créer un compte
                 </Link>

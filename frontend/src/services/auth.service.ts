@@ -16,67 +16,54 @@ export interface LoginResponse {
   requiresInterfaceSelection: boolean;
 }
 
-export interface RegisterData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  role?: 'USER' | 'ADMIN';
+// LOGIN
+export async function login(email: string, password: string): Promise<LoginResponse> {
+  const res = await api.post<LoginResponse>('/auth/login', { email, password });
+  localStorage.setItem('accessToken', res.data.accessToken);
+  localStorage.setItem('user', JSON.stringify(res.data.user));
+  return res.data;
 }
 
-class AuthService {
-  async login(email: string, password: string): Promise<LoginResponse> {
-    const res = await api.post<LoginResponse>('/auth/login', { email, password });
+// REGISTER
+export async function register(userData: any): Promise<{ message: string; emailToken: string }> {
+  const res = await api.post('/auth/register', userData);
+  return res.data;
+}
 
-    if (res.data && res.data.accessToken && res.data.user) {
-      localStorage.setItem('accessToken', res.data.accessToken);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      return res.data;
-    } else {
-      throw new Error('Invalid response format from server');
-    }
-  }
-
-  async register(userData: RegisterData): Promise<{ message: string; emailToken: string }> {
-    const res = await api.post('/auth/register', userData);
-    return res.data;
-  }
-
-  async refresh(): Promise<string> {
-    const res = await api.post('/auth/refresh');
-    localStorage.setItem('accessToken', res.data.accessToken);
-    return res.data.accessToken;
-  }
-
-  async logout(): Promise<void> {
+// LOGOUT
+export async function logout(): Promise<void> {
+  try {
     await api.post('/auth/logout');
+  } finally {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
   }
-
-  async resendVerificationEmail(email: string): Promise<{ message: string }> {
-    const res = await api.post('/auth/resend-verification', { email });
-    return res.data;
-  }
-
-  getUser(): User | null {
-    return JSON.parse(localStorage.getItem('user') || 'null');
-  }
-
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('accessToken');
-  }
-
-  isAdmin(): boolean {
-    const user = this.getUser();
-    return user?.role === 'ADMIN';
-  }
-
-  hasRole(role: 'USER' | 'ADMIN'): boolean {
-    const user = this.getUser();
-    return user?.role === role;
-  }
 }
 
-export const authService = new AuthService();
-export default authService;
+// RESEND VERIFICATION EMAIL
+export async function resendVerificationEmail(email: string): Promise<{ message: string }> {
+  const res = await api.post('/auth/resend-verification', { email });
+  return res.data;
+}
+
+// GET USER FROM LOCAL STORAGE
+export function getUser(): User | null {
+  const stored = localStorage.getItem('user');
+  return stored ? JSON.parse(stored) : null;
+}
+
+// CHECK AUTHENTICATION
+export function isAuthenticated(): boolean {
+  return !!localStorage.getItem('accessToken');
+}
+
+// CHECK ROLES
+export function isAdmin(): boolean {
+  const user = getUser();
+  return user?.role === 'ADMIN';
+}
+
+export function hasRole(role: 'USER' | 'ADMIN'): boolean {
+  const user = getUser();
+  return user?.role === role;
+}

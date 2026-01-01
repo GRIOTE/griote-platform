@@ -1,36 +1,54 @@
+// src/lib/axios.ts
 import axios from "axios";
 
-const instance = axios.create({
+const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
-  withCredentials: true, // pour cookie httpOnly
-  headers: {
-    "Content-Type": "application/json",
-  },
+  withCredentials: true, // Indispensable pour envoyer/recevoir le cookie httpOnly
 });
 
-instance.interceptors.request.use((config) => {
+// Ajoute le token à chaque requête
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-  if (token) config.headers["Authorization"] = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
-instance.interceptors.response.use(
-  (res) => res,
-  async (err) => {
-    const originalRequest = err.config;
-    if (err.response.status === 401 && !originalRequest._retry) {
+// Gère le rafraîchissement automatique du token
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
       try {
-        const refreshRes = await instance.post("/auth/refresh");
-        localStorage.setItem("accessToken", refreshRes.data.accessToken);
-        originalRequest.headers["Authorization"] = `Bearer ${refreshRes.data.accessToken}`;
-        return instance(originalRequest);
-      } catch {
+        const res = await api.post("/auth/refresh");
+        const newAccessToken = res.data.accessToken;
+
+        localStorage.setItem("accessToken", newAccessToken);
+
+        // Si le backend renvoie aussi l'user mis à jour (recommandé)
+        if (res.data.user) {
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+        }
+
+        // Réessayer la requête originale
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        // Refresh échoué → déconnexion
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
         window.location.href = "/connexion";
+        return Promise.reject(refreshError);
       }
     }
-    return Promise.reject(err);
+
+    return Promise.reject(error);
   }
 );
 
-export default instance;
+export default api;

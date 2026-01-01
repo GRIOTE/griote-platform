@@ -39,7 +39,7 @@ export default function Header() {
             <div className="flex flex-col leading-none">
               <span className="text-xl font-bold text-primary">Griote</span>
               <span className="text-[10px] uppercase tracking-widest text-primary/70 -mt-0.5">
-                Foundation
+                Project-Africa
               </span>
             </div>
           </Link>
@@ -60,8 +60,8 @@ export default function Header() {
                     className={cn(
                       "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition",
                       isActive
-                        ? "text-secondary bg-accent"
-                        : "text-secondary hover:bg-accent/70"
+                        ? "text-primary bg-accent"
+                        : "text-black hover:bg-accent/70"
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -96,13 +96,13 @@ export default function Header() {
                 </>
               ) : (
                 <div className="flex gap-3">
-                  <Link to="/user">
+                  <Link to="/mon-compte">
                     <button className="px-4 py-2 text-sm border rounded-lg hover:bg-accent/50 transition-colors">
                       Mon compte
                     </button>
                   </Link>
                   {user?.role === 'ADMIN' && (
-                    <Link to="/admin">
+                    <Link to="/admin/stats">
                       <button className="px-4 py-2 text-sm bg-accent rounded-lg hover:bg-accent/80 transition-colors">
                         Panneau d'administration
                       </button>
@@ -169,13 +169,13 @@ export default function Header() {
                 </>
               ) : (
                 <div className="space-y-2">
-                  <Link to="/user">
+                  <Link to="/mon-compte">
                     <button className="w-full py-3 border rounded-lg">
                       Mon compte
                     </button>
                   </Link>
                   {user?.role === 'ADMIN' && (
-                    <Link to="/admin">
+                    <Link to="/admin/stats">
                       <button className="w-full py-3 bg-accent rounded-lg">
                         Panneau d'administration
                       </button>

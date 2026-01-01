@@ -59,7 +59,7 @@ describe('Auth - Real Integration Tests', () => {
 
       // Vérifier que le refresh token existe en base
       const refreshTokenInDb = await RefreshToken.findOne({
-        where: { userId: userInDb.user_id }
+        where: { user_id: userInDb.user_id }
       });
       
       expect(refreshTokenInDb).toBeDefined();

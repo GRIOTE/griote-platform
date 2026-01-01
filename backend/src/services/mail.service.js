@@ -5,18 +5,16 @@ const logger = require('../config/logger.config');
 const config = {
   host: process.env.MAIL_HOST || process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.MAIL_PORT || process.env.SMTP_PORT || '587', 10),
-  secure: String(process.env.MAIL_SECURE || 'false').toLowerCase() === 'true', // true only for port 465
+  secure: String(process.env.MAIL_SECURE || 'false').toLowerCase() === 'true',
   auth: {
     user: process.env.MAIL_USER || process.env.SMTP_USER || '',
     pass: process.env.MAIL_PASS || process.env.SMTP_PASSWORD || '',
   },
   tls: {
-    // Required for Hostinger, OVH, some Gmail setups
     rejectUnauthorized: false,
   },
 };
 
-// Create transporter only if we have credentials
 const hasCredentials = Boolean(config.auth.user && config.auth.pass);
 
 let transporter = null;
@@ -28,7 +26,6 @@ if (hasCredentials) {
     `Email transporter configured → ${config.host}:${config.port} (secure: ${config.secure})`
   );
 
-  // Verify connection at startup
   transporter.verify((error) => {
     if (error) {
       logger.warn('SMTP connection failed at startup (will retry on each send)', {
@@ -69,30 +66,30 @@ async function sendVerificationEmail(email, token) {
   if (!transporter) {
     logger.info('VERIFICATION EMAIL (dev mode – not sent)', { to: email });
     logger.info(`Verification link → ${verificationLink}`);
-    return;
+    return true;
   }
 
-  // Production – fire and forget
-  transporter
-    .sendMail({
+  // Production – send with error handling
+  try {
+    await transporter.sendMail({
       from: process.env.EMAIL_FROM || 'contact@griote.org',
       to: email,
       subject: 'Verify your email – Griote Foundation',
       html,
-    })
-    .then(() => {
-      logger.info('Verification email sent successfully', { to: email });
-    })
-    .catch((err) => {
-      logger.warn('Failed to send verification email (registration continues anyway)', {
-        to: email,
-        error: err.message,
-      });
     });
+    logger.info('Verification email sent successfully', { to: email });
+    return true;
+  } catch (err) {
+    logger.warn('Failed to send verification email (registration continues anyway)', {
+      to: email,
+      error: err.message,
+    });
+    return true; // ✅ Still return true so registration continues
+  }
 }
 
 /**
- * Send password reset email – same safe behavior
+ * Send password reset email
  */
 async function sendPasswordResetEmail(email, token) {
   const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
@@ -109,34 +106,36 @@ async function sendPasswordResetEmail(email, token) {
     <p>Or copy-paste this link:</p>
     <p><strong>${resetLink}</strong></p>
     <p><em>This link expires in 1 hour.</em></p>
+    <hr>
+    <small>If you didn't request this, you can safely ignore this email.</small>
   `;
 
   if (!transporter) {
     logger.info('PASSWORD RESET EMAIL (dev mode – not sent)', { to: email });
     logger.info(`Reset link → ${resetLink}`);
-    return;
+    return true;
   }
 
-  transporter
-    .sendMail({
+  try {
+    await transporter.sendMail({
       from: process.env.EMAIL_FROM || '"Griote Foundation" <no-reply@griote.org>',
       to: email,
       subject: 'Reset your password – Griote Foundation',
       html,
-    })
-    .then(() => {
-      logger.info('Password reset email sent successfully', { to: email });
-    })
-    .catch((err) => {
-      logger.warn('Failed to send password reset email (operation continues)', {
-        to: email,
-        error: err.message,
-      });
     });
+    logger.info('Password reset email sent successfully', { to: email });
+    return true;
+  } catch (err) {
+    logger.warn('Failed to send password reset email (operation continues)', {
+      to: email,
+      error: err.message,
+    });
+    return true;
+  }
 }
 
 module.exports = {
   sendVerificationEmail,
   sendPasswordResetEmail,
-  transporter, // optional: useful for tests
+  transporter,
 };

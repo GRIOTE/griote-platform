@@ -1,7 +1,5 @@
-class RefreshDTO {
-  constructor({ refreshToken }) {
-    this.refreshToken = refreshToken;
-  }
+function refreshDTO({ refreshToken }) {
+  return { refreshToken };
 }
 
-module.exports = RefreshDTO;
+module.exports = refreshDTO;

@@ -1,177 +1,139 @@
 import React from 'react';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
-import { Users, Award, Target, Mail, Phone } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/auth/useAuth';
+import { Mail, Linkedin } from 'lucide-react';
+import { Tree, TreeNode } from 'react-organizational-chart';
 
 const BureauExecutif = () => {
   const { isAuthenticated, logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-  };
 
   const executives = [
     {
       name: "Dr. Amadou Diallo",
       role: "Président",
-      bio: "Expert en sciences de l'éducation avec plus de 20 ans d'expérience dans l'enseignement supérieur africain.",
-      image: "👨‍🏫",
-      contact: { email: "president@griote.foundation", phone: "+221 XX XXX XX XX" }
+      image: "/images/amadou.jpg",
+      contact: { email: "president@griote.foundation", linkedin: "https://linkedin.com/in/amadoudiallo" }
     },
     {
       name: "Prof. Fatou Ndiaye",
       role: "Vice-Présidente",
-      bio: "Spécialiste en technologies éducatives et directrice de recherche à l'Université Cheikh Anta Diop.",
-      image: "👩‍🏫",
-      contact: { email: "vice-president@griote.foundation", phone: "+221 XX XXX XX XX" }
+      image: "/images/fatou.jpg",
+      contact: { email: "vice-president@griote.foundation" }
     },
     {
       name: "M. Ibrahim Sow",
       role: "Secrétaire Général",
-      bio: "Ingénieur en informatique avec une passion pour l'innovation numérique au service de l'éducation.",
-      image: "👨‍💼",
-      contact: { email: "secretaire@griote.foundation", phone: "+221 XX XXX XX XX" }
+      image: "/images/ibrahim.jpg",
+      contact: { email: "secretaire@griote.foundation", linkedin: "https://linkedin.com/in/ibrahimsow" }
     },
     {
       name: "Dr. Amina Traoré",
       role: "Trésorière",
-      bio: "Économiste spécialisée dans le financement de l'éducation et le développement durable.",
-      image: "👩‍💼",
-      contact: { email: "tresorier@griote.foundation", phone: "+221 XX XXX XX XX" }
+      image: "/images/amina.jpg",
+      contact: { email: "tresorier@griote.foundation" }
     }
   ];
 
+  const handleLogout = () => logout();
+
   return (
-    <div className="min-h-screen bg-griote-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
 
       <main>
-        {/* Hero Section */}
-        <section className="bg-griote-blue bg-bogolan py-16">
-          <div className="container mx-auto px-4">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-griote-accent mb-6">
-                Bureau Exécutif
-              </h1>
-              <p className="text-xl text-griote-accent/80 max-w-3xl mx-auto">
-                L'équipe dirigeante qui pilote la vision et les opérations de Griote Foundation
-              </p>
-            </div>
+        {/* Hero */}
+        <section className="bg-gradient-to-br from-primary to-blue-900 py-28 text-center relative">
+          <div className="absolute inset-0 opacity-10">
+            <img
+              src="https://img.freepik.com/free-vector/ethnic-seamless-pattern-background-black-white-aztec-design-vector_53876-154221.jpg"
+              alt="Motif culturel africain"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="relative z-10 max-w-5xl mx-auto px-4">
+            <h1 className="text-5xl lg:text-6xl font-extrabold text-white mb-6">Bureau Exécutif</h1>
+            <p className="text-xl lg:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+              Découvrez l'équipe qui pilote Griote Project-Africa avec vision, leadership et innovation.
+            </p>
           </div>
         </section>
 
-        {/* Mission du Bureau */}
-        <section className="py-16 bg-griote-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-griote-blue mb-8 text-center flex items-center justify-center">
-                <Target className="w-8 h-8 mr-3 text-griote-accent" />
-                Mission du Bureau Exécutif
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Award className="w-8 h-8 text-griote-blue" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-griote-blue mb-3">Leadership</h3>
-                  <p className="text-griote-gray-800">
-                    Guider la stratégie globale et assurer l'alignement avec la vision panafricaine.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-8 h-8 text-griote-blue" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-griote-blue mb-3">Gouvernance</h3>
-                  <p className="text-griote-gray-800">
-                    Superviser les opérations quotidiennes et maintenir les standards d'excellence.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Target className="w-8 h-8 text-griote-blue" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-griote-blue mb-3">Innovation</h3>
-                  <p className="text-griote-gray-800">
-                    Promouvoir l'innovation technologique au service de l'éducation africaine.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Membres du Bureau */}
-        <section className="py-16 bg-griote-blue bg-kente">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-griote-accent mb-6">
-                Membres du Bureau Exécutif
-              </h2>
-              <p className="text-xl text-griote-accent/80 max-w-3xl mx-auto">
-                Découvrez l'équipe qui dirige Griote Foundation vers l'excellence
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {executives.map((executive, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                  <div className="w-20 h-20 bg-griote-accent rounded-2xl flex items-center justify-center mx-auto mb-4 text-4xl">
-                    {executive.image}
-                  </div>
-                  <h3 className="text-xl font-semibold text-griote-accent mb-2">
-                    {executive.name}
-                  </h3>
-                  <p className="text-griote-accent/80 font-medium mb-4">
-                    {executive.role}
-                  </p>
-                  <p className="text-griote-accent/70 text-sm mb-4">
-                    {executive.bio}
-                  </p>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-center text-griote-accent/80 text-sm">
-                      <Mail className="w-4 h-4 mr-2" />
-                      {executive.contact.email}
-                    </div>
-                    <div className="flex items-center justify-center text-griote-accent/80 text-sm">
-                      <Phone className="w-4 h-4 mr-2" />
-                      {executive.contact.phone}
+        {/* Organigramme */}
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4 max-w-7xl text-center">
+            <h2 className="text-4xl font-bold mb-12">Organigramme du Bureau Exécutif</h2>
+            <div className="overflow-x-auto">
+              <Tree
+                label={
+                  <div className="bg-primary text-white p-6 rounded-3xl shadow-lg inline-block min-w-[220px]">
+                    <img src={executives[0].image} alt={executives[0].name} className="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+                    <h3 className="text-xl font-bold">{executives[0].name}</h3>
+                    <p className="text-white/80 mb-2">{executives[0].role}</p>
+                    <div className="flex flex-col gap-1 text-sm">
+                      {executives[0].contact.email && (
+                        <a href={`mailto:${executives[0].contact.email}`} className="hover:underline flex items-center justify-center gap-2">
+                          <Mail className="w-4 h-4" /> {executives[0].contact.email}
+                        </a>
+                      )}
+                      {executives[0].contact.linkedin && (
+                        <a href={executives[0].contact.linkedin} target="_blank" className="hover:underline flex items-center justify-center gap-2">
+                          <Linkedin className="w-4 h-4" /> LinkedIn
+                        </a>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                }
+              >
+                <TreeNode
+                  label={
+                    <div className="bg-primary text-white p-6 rounded-3xl shadow-lg inline-block min-w-[220px]">
+                      <img src={executives[1].image} alt={executives[1].name} className="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+                      <h3 className="text-xl font-bold">{executives[1].name}</h3>
+                      <p className="text-white/80 mb-2">{executives[1].role}</p>
+                      {executives[1].contact.email && (
+                        <a href={`mailto:${executives[1].contact.email}`} className="hover:underline text-sm block">{executives[1].contact.email}</a>
+                      )}
+                    </div>
+                  }
+                />
+                <TreeNode
+                  label={
+                    <div className="flex gap-6 justify-center">
+                      {[2,3].map(i => (
+                        <div key={i} className="bg-primary text-white p-6 rounded-3xl shadow-lg inline-block min-w-[220px]">
+                          <img src={executives[i].image} alt={executives[i].name} className="w-24 h-24 rounded-full mx-auto mb-4 object-cover" />
+                          <h3 className="text-xl font-bold">{executives[i].name}</h3>
+                          <p className="text-white/80 mb-2">{executives[i].role}</p>
+                          {executives[i].contact.email && (
+                            <a href={`mailto:${executives[i].contact.email}`} className="hover:underline text-sm block">{executives[i].contact.email}</a>
+                          )}
+                          {executives[i].contact.linkedin && (
+                            <a href={executives[i].contact.linkedin} target="_blank" className="hover:underline text-sm block">LinkedIn</a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  }
+                />
+              </Tree>
             </div>
           </div>
         </section>
 
-        {/* Contact */}
-        <section className="py-16 bg-griote-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-3xl font-bold text-griote-blue mb-6">
-                Nous Contacter
-              </h2>
-              <p className="text-lg text-griote-gray-800 mb-8">
-                Pour toute question concernant la gouvernance ou les opérations de Griote Foundation,
-                n'hésitez pas à contacter notre bureau exécutif.
-              </p>
-              <div className="bg-gradient-to-r from-griote-blue/5 to-griote-accent/5 rounded-2xl p-8">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <div className="flex items-center">
-                    <Mail className="w-5 h-5 text-griote-accent mr-3" />
-                    <span className="text-griote-blue">bureau@griote.foundation</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Phone className="w-5 h-5 text-griote-accent mr-3" />
-                    <span className="text-griote-blue">+221 XX XXX XX XX</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {/* Contact général du bureau */}
+        <section className="py-20 bg-primary text-center">
+          <div className="max-w-3xl mx-auto px-4">
+            <h2 className="text-4xl font-bold text-white mb-4">Nous Contacter</h2>
+            <p className="text-white/80 mb-8">
+              Pour toute question concernant la gouvernance ou les opérations de la fondation.
+            </p>
+            <Button asChild>
+              <a href="mailto:bureau@griote.foundation" className="px-12 py-5 bg-accent text-white font-semibold rounded-lg hover:bg-accent/90">
+                Envoyer un message
+              </a>
+            </Button>
           </div>
         </section>
       </main>

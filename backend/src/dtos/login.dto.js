@@ -5,14 +5,15 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
-class LoginDTO {
-  constructor({ email, password }) {
-    this.email = email;
-    this.password = password;
-  }
+async function validateLogin(payload) {
+  return loginSchema.validateAsync(payload, { abortEarly: false });
+}
+
+function loginDTO({ email, password }) {
+  return { email, password };
 }
 
 module.exports = {
-  validateLogin: (payload) => loginSchema.validateAsync(payload, { abortEarly: false }),
-  LoginDTO,
+  validateLogin,
+  loginDTO,
 };

@@ -1,4 +1,3 @@
-// dtos/register.dto.js
 const Joi = require('joi');
 
 const registerSchema = Joi.object({
@@ -10,27 +9,31 @@ const registerSchema = Joi.object({
     .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
     .required(),
   passwordConfirm: Joi.string().valid(Joi.ref('password')).required().messages({
-    'any.only': 'Les mots de passe ne correspondent pas'
+    'any.only': 'Les mots de passe ne correspondent pas',
   }),
   role: Joi.string().valid('USER', 'ADMIN').default('USER'),
-  // autres champs optionnels...
-}).unknown(false); // interdit les champs non déclarés → plus propre
+}).unknown(false);
 
-class RegisterDTO {
-  constructor(data) {
-    this.firstName = data.firstName;
-    this.lastName = data.lastName;
-    this.email = data.email;
-    this.password = data.password;
-    this.role = data.role || 'USER';
-    this.dateOfBirth = data.date_of_birth;
-    this.bio = data.bio;
-    this.linkedinUrl = data.linkedin_url;
-    this.githubUrl = data.github_url;
-    this.websiteUrl = data.website_url;
-  }
+async function validateRegister(payload) {
+  return registerSchema.validateAsync(payload, { abortEarly: false });
 }
 
-const validateRegister = (payload) => registerSchema.validateAsync(payload, { abortEarly: false });
+function registerDTO(data) {
+  return {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    password: data.password,
+    role: data.role || 'USER',
+    dateOfBirth: data.date_of_birth,
+    bio: data.bio,
+    linkedinUrl: data.linkedin_url,
+    githubUrl: data.github_url,
+    websiteUrl: data.website_url,
+  };
+}
 
-module.exports = { validateRegister, RegisterDTO };
+module.exports = {
+  validateRegister,
+  registerDTO,
+};

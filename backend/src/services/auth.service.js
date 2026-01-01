@@ -34,9 +34,9 @@ async function registerUserWithEmailToken(payload) {
   await mailService.sendVerificationEmail(user.email, emailToken);
   return { user, emailToken };
 
-  logger.info('User created', { userId: user.user_id, email: user.email });
+  logger.info('User created', { user_id: user.user_id, email: user.email });
 
-  
+
 }
 
 async function verifyEmailToken(token) {
@@ -83,28 +83,52 @@ async function login(email, password) {
   const refreshTokenStr = signRefresh(payload);
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-  await RefreshToken.create({ token: refreshTokenStr, userId: user.user_id, expiresAt: expires });
+  await RefreshToken.create({ token: refreshTokenStr, user_id: user.user_id, expires_at: expires });
 
   return { accessToken, refreshToken: refreshTokenStr, user };
 }
 
 async function refreshTokens(oldRefresh) {
+  logger.debug('Refresh token attempt with token:', oldRefresh ? 'present' : 'missing');
   const dbToken = await RefreshToken.findOne({ where: { token: oldRefresh } });
-  if (!dbToken) throw new Error('Invalid refresh token');
+  if (!dbToken) {
+    logger.warn('Refresh token not found in DB');
+    throw new Error('Invalid refresh token');
+  }
 
+  logger.debug('DB token found, expires at:', dbToken.expires_at);
   let payload;
   try {
     payload = verify(oldRefresh);
+    logger.debug('JWT verified successfully, payload:', payload);
   } catch (e) {
+    logger.warn('JWT verification failed:', e.message);
     await dbToken.destroy();
     throw new Error('Invalid or expired refresh token');
   }
 
+  // Récupère l'utilisateur frais (au cas où des données auraient changé)
+  const user = await User.findByPk(payload.id);
+  if (!user) {
+    logger.warn('User not found for id:', payload.id);
+    throw new Error('User not found');
+  }
+
+  logger.debug('Generating new tokens for user:', user.user_id);
   const newAccess = signAccess({ id: payload.id, role: payload.role });
   const newRefresh = signRefresh({ id: payload.id, role: payload.role });
-  await dbToken.update({ token: newRefresh, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+  await dbToken.update({
+    token: newRefresh,
+    expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  });
 
-  return { accessToken: newAccess, refreshToken: newRefresh };
+  logger.info('Refresh tokens successful for user:', user.user_id);
+  // ← AJOUT IMPORTANT
+  return {
+    accessToken: newAccess,
+    refreshToken: newRefresh,
+    user // ← on renvoie l'utilisateur complet
+  };
 }
 
 async function revokeRefresh(token) {
@@ -115,16 +139,12 @@ async function requestPasswordReset(email) {
   const user = await User.findOne({ where: { email } });
   if (!user) throw new Error('User not found');
 
-  const token = signEmail({ userId: user.user_id, type: 'PASSWORD_RESET' });
+  const token = signEmail({ user_id: user.user_id, type: 'PASSWORD_RESET' });
   await mailService.sendPasswordResetEmail(user.email, token);
   return true;
 }
 
 async function resetPassword(token, newPassword) {
-  if (!validatePasswordComplexity(newPassword)) {
-    throw new Error('Password does not meet complexity requirements');
-  }
-
   let payload;
   try {
     payload = verify(token);
@@ -134,8 +154,13 @@ async function resetPassword(token, newPassword) {
 
   if (payload.type !== 'PASSWORD_RESET') throw new Error('Invalid token type');
 
-  const user = await User.findByPk(payload.userId);
+  // Vérification utilisateur avant complexité du mot de passe
+  const user = await User.findByPk(payload.user_id);
   if (!user) throw new Error('User not found');
+
+  if (!validatePasswordComplexity(newPassword)) {
+    throw new Error('Password does not meet complexity requirements');
+  }
 
   const hashed = await hashPassword(newPassword);
   user.password_hash = hashed;
@@ -143,12 +168,13 @@ async function resetPassword(token, newPassword) {
   return true;
 }
 
-async function changePassword(userId, oldPassword, newPassword) {
+
+async function changePassword(user_id, oldPassword, newPassword) {
   if (!validatePasswordComplexity(newPassword)) {
     throw new Error('Password does not meet complexity requirements');
   }
 
-  const user = await User.findByPk(userId);
+  const user = await User.findByPk(user_id);
   if (!user) throw new Error('User not found');
 
   const ok = await comparePassword(oldPassword, user.password_hash);

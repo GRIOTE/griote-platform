@@ -29,7 +29,7 @@ const VerifyEmail = () => {
 
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/auth/verify-email?token=${token}`,
+          `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/verify-email?token=${token}`,
           {
             method: 'GET',
             headers: {
@@ -70,7 +70,7 @@ const VerifyEmail = () => {
               <img src={grioteLogo} alt="Logo Griote" className="w-full h-full" />
             </div>
             <span className="text-2xl font-bold text-griote-white">
-              Fondation Griote
+              Griote Project-Africa
             </span>
           </Link>
         </div>
@@ -144,7 +144,7 @@ const VerifyEmail = () => {
                         type="email"
                         placeholder="votre@email.com"
                         value={resendEmail}
-                        onChange={(e) => setResendEmail(e.target.value)}
+                        onChange={(e: React.FormEvent<HTMLFormElement>) => setResendEmail(e.target.value)}
                         className="border-griote-accent focus:border-griote-blue"
                         required
                       />

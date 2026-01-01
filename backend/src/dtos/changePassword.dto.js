@@ -1,8 +1,8 @@
-class ChangePasswordDTO {
-  constructor({ oldPassword, newPassword }) {
-    this.oldPassword = oldPassword;
-    this.newPassword = newPassword;
-  }
+function changePasswordDTO({ oldPassword, newPassword }) {
+  return {
+    oldPassword,
+    newPassword
+  };
 }
 
-module.exports = ChangePasswordDTO;
+module.exports =changePasswordDTO;

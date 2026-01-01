@@ -62,7 +62,7 @@ const Inscription = () => {
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
-        passwordConfirm: formData.confirmPassword, // ⚠️ Obligatoire pour Joi
+        passwordConfirm: formData.confirmPassword, // Obligatoire pour Joi
         role: 'USER', // optionnel mais cohérent
       });
 
@@ -92,7 +92,7 @@ const Inscription = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary via-blue-700 to-blue-900 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* Logo et titre */}
         <div className="text-center mb-8">
@@ -273,7 +273,7 @@ const Inscription = () => {
                 Vous avez déjà un compte ?{' '}
                 <Link
                   to="/connexion"
-                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                  className="text-primary hover:text-blue-800 font-medium transition-colors"
                 >
                   Se connecter
                 </Link>

@@ -11,7 +11,7 @@
     "test:coverage": "jest --coverage --verbose",
     "test:unit": "jest tests/unit --verbose",
     "test:integration": "npm run test:integration:real",
-"test:integration:real": "sudo docker compose -f compose.yaml -f compose.test.yaml up --remove-orphans --wait postgres-test && jest tests/integration --runInBand --forceExit && sudo docker compose -f compose.yaml -f compose.test.yaml down -v --remove-orphans"
+    "test:integration:real": "sudo docker compose -f compose.yaml -f compose.test.yaml up --remove-orphans --wait postgres-test && jest tests/integration --runInBand --forceExit && sudo docker compose -f compose.yaml -f compose.test.yaml down -v --remove-orphans"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "joi": "^18.0.2",

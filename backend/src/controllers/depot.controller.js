@@ -19,13 +19,12 @@ exports.create = async (req, res) => {
       files.map(async (file) => {
         const url = await minioService.upload(file, `depot-${depot.depot_id}`);
         return {
-          resource_type: 'DEPOT',
-          resource_id: depot.depot_id,
-          file_url: url,
-          file_name: file.originalname,
+          depot_id: depot.depot_id,
+          owner_id: req.user.user_id,
+          filename: file.originalname,
+          url: url,
           file_type: file.mimetype,
-          file_size: file.size,
-          is_main: file.fieldname === 'main_file'
+          file_size: file.size
         };
       })
     );
@@ -59,4 +58,56 @@ exports.mine = async (req, res) => {
     order: [['created_at', 'DESC']]
   });
   res.json(depots);
+};
+
+exports.listAll = async (req, res) => {
+  const depots = await Depot.findAll({
+    include: [
+      'category',
+      { model: Document, as: 'documents' },
+      { model: DepotTag, as: 'tags', through: { attributes: [] } }
+    ],
+    order: [['created_at', 'DESC']]
+  });
+  res.json(depots);
+};
+
+exports.update = async (req, res) => {
+  const { depot_id } = req.params;
+  const [n] = await Depot.update(req.body, { where: { depot_id } });
+  if (!n) return res.status(404).json({ error: 'Not found' });
+  const depot = await Depot.findByPk(depot_id, {
+    include: [
+      'category',
+      { model: Document, as: 'documents' },
+      { model: DepotTag, as: 'tags', through: { attributes: [] } }
+    ]
+  });
+  res.json(depot);
+};
+
+exports.delete = async (req, res) => {
+  const { depot_id } = req.params;
+  const n = await Depot.destroy({ where: { depot_id } });
+  n ? res.json({ ok: true }) : res.status(404).json({ error: 'Not found' });
+};
+
+/* ========================= STATS ENDPOINTS ========================= */
+
+exports.getTotalDepots = async (req, res) => {
+  try {
+    const count = await Depot.count();
+    return res.json({ totalDepots: count });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getTotalDocuments = async (req, res) => {
+  try {
+    const count = await Document.count();
+    return res.json({ totalDocuments: count });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 };

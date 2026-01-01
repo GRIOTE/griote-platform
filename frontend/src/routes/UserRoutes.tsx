@@ -8,7 +8,7 @@ export default function UserRoutes() {
   return (
     <Routes>
       <Route
-        path="compte"
+        path="/"
         element={
           <ProtectedRoute>
             <MonCompte />

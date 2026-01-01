@@ -1,11 +1,14 @@
+// src/auth/AuthProvider.tsx
 import { createContext, useState, useEffect, ReactNode } from 'react';
-import { User, authService } from '@/services/auth.service';
+import { User, login, register, logout, getUser, LoginResponse } from '@/services/auth.service';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<any>;
-  register: (userData: { firstName: string; lastName: string; email: string; password: string }) => Promise<void>;
+
+  login: (email: string, password: string) => Promise<LoginResponse>;
+  register: (userData: any) => Promise<any>;
   logout: () => Promise<void>;
+  refreshUser: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -17,51 +20,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const validateToken = async () => {
-      const token = localStorage.getItem('accessToken');
-      const storedUser = localStorage.getItem('user');
-
-      if (token && storedUser) {
-        try {
-          // Try to refresh the token to validate it
-          await authService.refresh();
-          setUser(JSON.parse(storedUser));
-        } catch (error) {
-          // Token is invalid, clear storage
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('user');
-          setUser(null);
-        }
-      }
-      setIsLoading(false);
-    };
-
-    validateToken();
+    const storedUser = getUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    setIsLoading(false);
   }, []);
-const login = async (email: string, password: string) => {
-  const res = await authService.login(email, password);
-  setUser(res.user);
-  return res;
-};
 
-  const register = async (userData: { firstName: string; lastName: string; email: string; password: string }) => {
-    await authService.register(userData);
+  const handleLogin = async (email: string, password: string) => {
+    const res = await login(email, password);
+    setUser(res.user);
+    return res;
   };
 
-  const logout = async () => {
-    await authService.logout();
+  const handleRegister = async (userData: any) => {
+    return await register(userData);
+  };
+
+  const handleLogout = async () => {
+    await logout();
     setUser(null);
   };
 
+  const refreshUser = () => {
+    const storedUser = getUser();
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{
-      user,
-      login,
-      register,
-      logout,
-      isAuthenticated: !!user,
-      isLoading
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login: handleLogin,
+        register: handleRegister,
+        logout: handleLogout,
+        refreshUser,
+        isAuthenticated: !!user,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

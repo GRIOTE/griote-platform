@@ -6,12 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import DefaultAnnouncementImage from './DefaultAnnouncementImage';
 
 export interface Announcement {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
-  type: 'SCHOLARSHIP' | 'EVENT' | 'OPPORTUNITY' | 'CONFERENCE' | 'WORKSHOP';
-  priority: 'HIGH' | 'MEDIUM' | 'LOW';
-  organization: string;
+  type?: 'SCHOLARSHIP' | 'EVENT' | 'OPPORTUNITY' | 'CONFERENCE' | 'WORKSHOP';
+  priority?: 'HIGH' | 'MEDIUM' | 'LOW';
+  organization?: string;
   location?: string;
   deadline?: string;
   publishedAt: string;
@@ -22,9 +22,20 @@ export interface Announcement {
     url: string;
     thumbnail?: string;
   };
-  tags: string[];
+  tags?: string[];
   isSponsored?: boolean;
   participantCount?: number;
+  // New fields for backend compatibility
+  titre?: string;
+  contenu?: string;
+  statut?: string;
+  date_creation?: string;
+  date_publication?: string;
+  imageApercu?: {
+    id: number;
+    url: string;
+    description?: string;
+  };
 }
 
 interface AnnouncementCardProps {
@@ -36,6 +47,14 @@ interface AnnouncementCardProps {
 const AnnouncementCard = ({ announcement, onView, className = '' }: AnnouncementCardProps) => {
   const [imageError, setImageError] = useState(false);
 
+  // Handle both old and new data structures
+  const title = announcement.title || announcement.titre || '';
+  const description = announcement.description || announcement.contenu?.substring(0, 150) + '...' || '';
+  const publishedAt = announcement.publishedAt || announcement.date_publication || announcement.date_creation || '';
+  const media = announcement.media || (announcement.imageApercu ? {
+    type: 'IMAGE' as const,
+    url: announcement.imageApercu.url
+  } : undefined);
 
   const getTypeLabel = (type: string) => {
     switch (type) {
@@ -54,7 +73,7 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
     } else if (announcement.internalPath) {
       window.location.href = announcement.internalPath;
     } else if (onView) {
-      onView(announcement.id);
+      onView(announcement.id.toString());
     }
   };
 
@@ -67,19 +86,19 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
       <CardContent className="p-0">
         {/* Media Section */}
         <div className="relative h-48 overflow-hidden rounded-t-lg">
-          {announcement.media && !imageError ? (
-            announcement.media.type === 'IMAGE' ? (
+          {media && !imageError ? (
+            media.type === 'IMAGE' ? (
               <img
-                src={announcement.media.url}
-                alt={announcement.title}
+                src={media.url}
+                alt={title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 onError={() => setImageError(true)}
               />
             ) : (
               <div className="relative">
                 <img
-                  src={announcement.media.thumbnail || '/api/placeholder/400/200'}
-                  alt={announcement.title}
+                  src={media.thumbnail || '/api/placeholder/400/200'}
+                  alt={title}
                   className="w-full h-full object-cover"
                   onError={() => setImageError(true)}
                 />
@@ -89,7 +108,7 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
               </div>
             )
           ) : (
-            <DefaultAnnouncementImage 
+            <DefaultAnnouncementImage
               type={announcement.type}
               className="w-full h-full"
             />
@@ -110,7 +129,7 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center space-x-2">
               <Badge className="bg-griote-accent text-griote-blue text-xs px-2 py-1">
-                {getTypeLabel(announcement.type)}
+                {getTypeLabel(announcement.type || 'DEFAULT')}
               </Badge>
             </div>
             {announcement.externalUrl && (
@@ -120,17 +139,19 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
 
           {/* Title */}
           <h3 className="text-lg font-semibold text-griote-gray-800 mb-2 line-clamp-2 group-hover:text-griote-blue transition-colors">
-            {announcement.title}
+            {title}
           </h3>
 
           {/* Organization */}
-          <p className="text-sm text-griote-blue font-medium mb-2">
-            {announcement.organization}
-          </p>
+          {announcement.organization && (
+            <p className="text-sm text-griote-blue font-medium mb-2">
+              {announcement.organization}
+            </p>
+          )}
 
           {/* Description */}
           <p className="text-sm text-griote-gray-600 mb-4 line-clamp-3">
-            {announcement.description}
+            {description}
           </p>
 
           {/* Meta Information */}
@@ -151,32 +172,34 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-1 mb-4">
-            {announcement.tags.slice(0, 3).map((tag, index) => (
-              <Badge
-                key={index}
-                className="text-xs bg-griote-gray-100 text-griote-gray-600 hover:bg-griote-blue-light hover:text-griote-blue transition-colors"
-              >
-                {tag}
-              </Badge>
-            ))}
-            {announcement.tags.length > 3 && (
-              <Badge className="text-xs bg-griote-gray-100 text-griote-gray-600">
-                +{announcement.tags.length - 3}
-              </Badge>
-            )}
-          </div>
+          {announcement.tags && announcement.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-4">
+              {announcement.tags.slice(0, 3).map((tag, index) => (
+                <Badge
+                  key={index}
+                  className="text-xs bg-griote-gray-100 text-griote-gray-600 hover:bg-griote-blue-light hover:text-griote-blue transition-colors"
+                >
+                  {tag}
+                </Badge>
+              ))}
+              {announcement.tags.length > 3 && (
+                <Badge className="text-xs bg-griote-gray-100 text-griote-gray-600">
+                  +{announcement.tags.length - 3}
+                </Badge>
+              )}
+            </div>
+          )}
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-3 border-t border-griote-gray-100">
             <span className="text-xs text-griote-gray-600">
-              {new Date(announcement.publishedAt).toLocaleDateString('fr-FR')}
+              {new Date(publishedAt).toLocaleDateString('fr-FR')}
             </span>
             
             <Button
               size="sm"
               className="bg-griote-blue text-white hover:bg-griote-blue-dark text-xs px-4 py-1"
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
                 handleCardClick();
               }}
