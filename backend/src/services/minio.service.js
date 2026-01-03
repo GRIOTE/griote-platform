@@ -30,6 +30,22 @@ async function initialize() {
       logger.info(`Bucket déjà existant : ${bucket}`);
     }
 
+    // Set bucket policy to allow public read access (toujours appliquer, même si bucket existe)
+    const policy = {
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Effect: "Allow",
+          Principal: "*",
+          Action: "s3:GetObject",
+          Resource: `arn:aws:s3:::${bucket}/*`
+        }
+      ]
+    };
+
+    await minioClient.setBucketPolicy(bucket, JSON.stringify(policy));
+    logger.info(`Politique publique appliquée au bucket : ${bucket}`);
+
     return true;
   } catch (err) {
     logger.error("Impossible d'initialiser MinIO", err);
@@ -42,9 +58,15 @@ async function initialize() {
 async function upload(file, prefix = '') {
   const bucket = getBucket();
 
+  // Nettoyer le nom de fichier original (supprimer espaces et caractères spéciaux)
+  const cleanOriginalName = file.originalname
+    .replace(/\s+/g, '_') // Remplacer espaces par underscores
+    .replace(/[^a-zA-Z0-9._-]/g, '') // Garder seulement lettres, chiffres, points, underscores, tirets
+    .toLowerCase();
+
   const fileName =
     `${prefix ? prefix + '/' : ''}` +
-    `${Date.now()}-${Math.round(Math.random() * 1e9)}-${file.originalname}`;
+    `${Date.now()}-${Math.round(Math.random() * 1e9)}-${cleanOriginalName}`;
 
   try {
     await minioClient.putObject(

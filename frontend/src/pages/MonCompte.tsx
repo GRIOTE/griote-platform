@@ -98,6 +98,7 @@ const MonCompte: React.FC = () => {
       const freshUser = await getProfile();
       localStorage.setItem('user', JSON.stringify(freshUser));
       refreshUser(); // Update the auth context
+      setProfilePicture(freshUser.profile_picture || null);
     } catch (error) {
       toast.error('Erreur lors du rafraîchissement du profil');
     }
@@ -117,6 +118,7 @@ const MonCompte: React.FC = () => {
       setProfilePicture(authUser.profile_picture || null);
     }
   }, [authUser]);
+
 
   const handleProfileChange = (key: keyof ProfileState, value: string) => {
     setProfile((prev) => ({ ...prev, [key]: value }));
@@ -140,35 +142,16 @@ const MonCompte: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const previewUrl = URL.createObjectURL(file);
-    setProfilePicture(previewUrl);
-
+    // Afficher un indicateur de chargement
+    setProfilePicture(null);
     const formData = new FormData();
     formData.append('file', file);
 
     setLoading((prev) => ({ ...prev, upload: true }));
 
     try {
-      const response: any = await uploadProfilePicture(formData);
-
-      let finalUrl: string | null = previewUrl;
-
-      if (response && typeof response === 'object') {
-        if (response.profile_picture) {
-          finalUrl = response.profile_picture;
-        } else if (response.url) {
-          finalUrl = response.url;
-        }
-      }
-
-      if (finalUrl !== previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setProfilePicture(finalUrl);
-
-      // === AJOUT : On recharge les données fraîches après upload ===
+      await uploadProfilePicture(formData);
       await refreshProfile();
-
       toast.success('Photo de profil mise à jour avec succès');
     } catch (error) {
       toast.error(

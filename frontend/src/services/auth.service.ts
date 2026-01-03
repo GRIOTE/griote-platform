@@ -8,6 +8,7 @@ export interface User {
   email: string;
   role: 'USER' | 'ADMIN';
   is_email_verified: boolean;
+  profile_picture?: string;
 }
 
 export interface LoginResponse {

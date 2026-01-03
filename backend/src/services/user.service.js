@@ -14,11 +14,6 @@ async function getFullProfile(user_id) {
     include: [
       {
         model: Image,
-        as: 'profilePicture',
-        required: false
-      },
-      {
-        model: Image,
         as: 'images',
         where: { imageable_type: 'user' },
         required: false
@@ -29,6 +24,15 @@ async function getFullProfile(user_id) {
   if (!user) {
     throw new Error('User not found');
   }
+
+  // Get the latest profile picture (most recent image for this user)
+  const latestImage = await Image.findOne({
+    where: { imageable_type: 'user', imageable_id: user_id },
+    order: [['created_at', 'DESC']]
+  });
+
+  // Add profile_picture for frontend compatibility
+  user.profile_picture = latestImage?.url || null;
 
   return user;
 }
@@ -125,10 +129,11 @@ async function changePassword(user_id, oldPassword, newPassword) {
 async function setProfilePicture(user_id, file, description = 'Profile picture') {
   if (!file) throw new Error('Fichier manquant');
 
-  // Supprimer l’ancienne image
+  // Supprimer l'ancienne image
   const oldImages = await Image.findAll({
     where: { imageable_type: 'user', imageable_id: user_id }
   });
+
   for (const img of oldImages) {
     await minioService.deleteFile(img.url);
     await img.destroy();
@@ -137,7 +142,7 @@ async function setProfilePicture(user_id, file, description = 'Profile picture')
   // Upload sur MinIO
   const url = await minioService.uploadFile(file, 'profile-pictures');
 
-  // Créer l’entrée BDD
+  // Créer l'entrée BDD
   const profileImage = await Image.create({
     url,
     description,

@@ -9,7 +9,7 @@ router.get('/verify-email', authController.verifyEmail);
 router.post('/resend-verification', authController.resendVerificationEmail);
 router.post('/login', authController.login);
 router.post('/refresh', authController.refreshToken);
-router.post('/logout', authMiddleware, authController.logout);
+router.post('/logout', authController.logout);
 
 // Password management
 router.post('/request-password-reset', authController.requestPasswordReset);

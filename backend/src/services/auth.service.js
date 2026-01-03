@@ -3,6 +3,7 @@ const RefreshToken = require('../models/refreshToken.model');
 const { hashPassword, comparePassword, validatePasswordComplexity } = require('../utils/password.util');
 const { signAccess, signRefresh, signEmail, verify } = require('../utils/token.util');
 const mailService = require('./mail.service');
+const userService = require('./user.service');
 const logger = require('../config/logger.config');
 
 async function registerUserWithEmailToken(payload) {
