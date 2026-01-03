@@ -1,9 +1,9 @@
+// user service
+
 const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { User, Image } = require('../models');
 const minioService = require('./minio.service');
-
-
 
 /**
  * Get full profile of a user (safe)
@@ -31,10 +31,11 @@ async function getFullProfile(user_id) {
     order: [['created_at', 'DESC']]
   });
 
-  // Add profile_picture for frontend compatibility
-  user.profile_picture = latestImage?.url || null;
+  // ✅ CORRECTION : Convertir en objet plain et ajouter profile_picture
+  const userJson = user.toJSON();
+  userJson.profile_picture = latestImage?.url || null;
 
-  return user;
+  return userJson;
 }
 
 /**
@@ -98,11 +99,10 @@ async function deleteUser(user_id) {
 
   await user.destroy();
   return { message: 'User deleted successfully' };
-
 }
 
 /**
- * 
+ * Change password
  */
 async function changePassword(user_id, oldPassword, newPassword) {
   const user = await User.findByPk(user_id);
@@ -150,7 +150,8 @@ async function setProfilePicture(user_id, file, description = 'Profile picture')
     imageable_id: user_id
   });
 
-  return profileImage;
+  // ✅ CORRECTION : Retourner l'objet avec l'URL
+  return profileImage.toJSON();
 }
 
 async function removeProfilePicture(user_id) {
@@ -165,8 +166,6 @@ async function removeProfilePicture(user_id) {
 
   return { message: 'Profile picture removed successfully' };
 }
-
-
 
 /* =====================================================
    ADMIN — opérations globales / gestion utilisateurs
@@ -321,4 +320,3 @@ module.exports = {
   updateUserRole,
   updateUser
 };
-
