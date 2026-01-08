@@ -101,8 +101,9 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-griote-white text-griote-gray-800 font-ubuntu;
+  @apply bg-background text-foreground font-ubuntu;
   }
+
 
   /* Motifs bogolan et kente en arrière-plan */
   .bg-bogolan {

@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import Header from '@/components/Layout/Header';
-import Footer from '@/components/Layout/Footer';
-import HeroSection from '@/components/home/HeroSection';
-import EcosystemSection from '@/components/home/EcosystemSection';
-import CallToActionSection from '@/components/home/CallToActionSection';
-import { useAuth } from '@/auth/useAuth';
-import FaqSection from '@/components/home/FaqSection';
-import AnnouncementsSection from '@/components/AnnouncementsSection';
-import { Announcement } from '@/components/AnnouncementCard';
-import { getPublishedAnnouncements } from '@/services/announcement.service';
+import Header from '../components/Layout/Header';
+import Footer from '../components/Layout/Footer';
+import HeroSection from '../components/home/HeroSection';
+import EcosystemSection from '../components/home/EcosystemSection';
+import CallToActionSection from '../components/home/CallToActionSection';
+import { useAuth } from '../auth/useAuth';
+import FaqSection from '../components/home/FaqSection';
+import AnnouncementsSection from '../components/AnnouncementsSection';
+import { Announcement } from '../components/AnnouncementCard';
+import { getPublishedAnnouncements } from '../services/announcement.service';
 
 const Home = () => {
   const { isAuthenticated, logout } = useAuth();

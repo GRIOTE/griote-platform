@@ -4,7 +4,7 @@ import Footer from '../components/Layout/Footer';
 import { Button } from '../components/ui/button';
 import { useAuth } from '../auth/useAuth';
 import { Link } from 'react-router-dom';
-import { Archive, Lightbulb, Target, Users, ArrowRight } from 'lucide-react';
+import { Archive, Lightbulb, Target, Users, ArrowRight, Mail } from 'lucide-react';
 import { Card } from '../components/ui/card';
 
 const APropos = () => {
@@ -18,28 +18,28 @@ const APropos = () => {
         {/* Hero Section – Impactante avec motif culturel discret */}
         <section className="relative bg-gradient-to-br from-primary to-blue-900 py-28 lg:py-40 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
-            <img 
-              src="https://img.freepik.com/free-vector/ethnic-seamless-pattern-background-black-white-aztec-design-vector_53876-154221.jpg" 
-              alt="Motif culturel africain" 
-              className="w-full h-full object-cover" 
+            <img
+              src="https://img.freepik.com/free-vector/ethnic-seamless-pattern-background-black-white-aztec-design-vector_53876-154221.jpg"
+              alt="Motif culturel africain"
+              className="w-full h-full object-cover"
             />
           </div>
           <div className="container mx-auto px-4 relative z-10 text-center max-w-5xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-8">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-accent mb-8">
               Griote Project-Africa
             </h1>
-            <p className="text-xl lg:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl font-black lg:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
               Une initiative dédiée à la valorisation, l’archivage et la diffusion des savoirs africains.<br />
               Nous construisons un écosystème académique et technologique souverain pour connecter les talents du continent et façonner l’avenir de l’innovation.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link to="/inscription">
-                <Button size="lg" className="px-10 py-6 text-lg font-semibold bg-white text-primary hover:bg-accent/90">
+                <Button size="lg" className="px-12 py-8 text-2xl font-semibold bg-white text-primary hover:bg-accent/90">
                   Rejoindre la communauté
                 </Button>
               </Link>
               <Link to="/recherche">
-                <Button variant="outline" size="lg" className="px-10 py-6 text-lg font-semibold border-white text-white hover:bg-white/10">
+                <Button variant="outline" size="lg" className="px-12 py-8 text-2xl font-bold bg-transparent border-white text-white hover:bg-white/10 transition-all inline-flex items-center gap-3">
                   Explorer les dépôts
                   <ArrowRight className="w-6 h-6 ml-3" />
                 </Button>
@@ -110,62 +110,98 @@ const APropos = () => {
               <h2 className="text-4xl lg:text-5xl font-bold text-center mb-12">
                 Portée par une Équipe Engagée
               </h2>
-              <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+              <div className="max-w-5xl mx-auto">
                 <Link to="/a-propos/bureau-executif">
-                  <Card className="p-10 rounded-3xl text-center hover:shadow-2xl transition-all hover:-translate-y-3 border border-border/30 group">
-                    <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center mx-auto mb-8">
-                      <Users className="w-20 h-20 text-white" />
-                    </div>
-                    <h3 className="text-3xl font-bold mb-4">Bureau Exécutif</h3>
-                    <p className="text-foreground/80 text-lg mb-6">
-                      La direction stratégique qui pilote la vision et les opérations de la fondation.
-                    </p>
-                    <span className="text-primary font-semibold group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
-                      Découvrir l'équipe <ArrowRight className="w-5 h-5" />
-                    </span>
-                  </Card>
-                </Link>
+                  <Card className="relative overflow-hidden rounded-3xl border border-border group hover:shadow-2xl transition-all">
 
-                <Link to="/a-propos/contributeurs">
-                  <Card className="p-10 rounded-3xl text-center hover:shadow-2xl transition-all hover:-translate-y-3 border border-border/30 group">
-                    <div className="w-32 h-32 bg-primary rounded-full flex items-center justify-center mx-auto mb-8">
-                      <Lightbulb className="w-20 h-20 text-white" />
+                    {/* Background image */}
+                    <img
+                      src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1600&auto=format&fit=crop"
+                      alt="Équipe africaine en réunion"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/80 to-background/40" />
+
+                    {/* Content */}
+                    <div className="relative z-10 p-12 lg:p-16 text-center flex flex-col items-center">
+
+                      {/* Icon */}
+                      <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center mb-8 shadow-lg">
+                        <Users className="w-12 h-12 text-white" />
+                      </div>
+
+                      <h3 className="text-4xl font-extrabold mb-4">
+                        Bureau Exécutif
+                      </h3>
+
+                      <p className="text-lg text-muted-foreground max-w-2xl mb-8">
+                        L’organe stratégique qui définit la vision, pilote les décisions
+                        structurantes et garantit l’excellence opérationnelle du projet.
+                      </p>
+
+                      <span className="inline-flex items-center gap-2 text-primary font-semibold text-lg group-hover:translate-x-2 transition-transform">
+                        Découvrir l’équipe dirigeante
+                        <ArrowRight className="w-5 h-5" />
+                      </span>
                     </div>
-                    <h3 className="text-3xl font-bold mb-4">Contributeurs & Partenaires</h3>
-                    <p className="text-foreground/80 text-lg mb-6">
-                      Chercheurs, experts et institutions qui enrichissent quotidiennement notre écosystème.
-                    </p>
-                    <span className="text-primary font-semibold group-hover:translate-x-2 transition-transform inline-flex items-center gap-2">
-                      Rencontrer les contributeurs <ArrowRight className="w-5 h-5" />
-                    </span>
                   </Card>
                 </Link>
               </div>
+
             </div>
 
           </div>
         </section>
 
         {/* Call to Action final – Puissant et centré */}
-        <section className="py-24 lg:py-32 bg-gradient-to-br from-primary to-blue-900">
+        <section className="relative bg-gradient-to-br from-primary to-blue-900 py-28 lg:py-40 overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <img
+              src="https://img.freepik.com/free-vector/ethnic-seamless-pattern-background-black-white-aztec-design-vector_53876-154221.jpg"
+              alt="Motif culturel africain"
+              className="w-full h-full object-cover"
+            />
+          </div>
           <div className="container mx-auto px-4 text-center max-w-5xl">
-            <h2 className="text-4xl lg:text-6xl font-extrabold text-white mb-8">
-              Rejoignez le Mouvement Panafricain du Savoir
+
+            <h2 className="text-4xl lg:text-6xl font-extrabold text-accent mb-8">
+              Rejoindre & Contribuer au Savoir Africain
             </h2>
-            <p className="text-xl lg:text-2xl text-white/90 mb-12 max-w-4xl mx-auto">
-              Ensemble, construisons le plus grand réseau académique et technologique d’Afrique.<br />
-              Votre voix, votre recherche, votre expertise comptent.
+
+            <p className="text-xl font-black lg:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Griote Project-Africa est un espace ouvert à toutes celles et ceux
+              qui produisent, transmettent et valorisent le savoir africain.
+              Chercheur, étudiant, professionnel ou institution : votre contribution compte.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              {/* Bouton principal */}
               <Link to="/inscription">
-                <Button size="xl" className="px-12 py-8 text-2xl font-bold bg-white text-primary hover:bg-accent/90">
-                  Commencer maintenant
+                <Button
+                  className="px-12 py-8 text-2xl font-bold bg-white text-primary hover:bg-accent hover:text-primary transition-all inline-flex items-center gap-3"
+                >
+                  Commencer
+                  <ArrowRight className="w-20 h-6" />
+                </Button>
+              </Link>
+
+              {/* Bouton secondaire */}
+              <Link to="/contact">
+                <Button
+                  variant="outline"
+                  className="px-12 py-8 text-2xl font-bold bg-transparent border-white text-white hover:bg-white/10 transition-all inline-flex items-center gap-4"
+                >
+                  Nous contacter
+                  <Mail className="w-12 h-12" /> {/* 48px */}
                 </Button>
               </Link>
 
             </div>
           </div>
         </section>
+
       </main>
 
       <Footer />

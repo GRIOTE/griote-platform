@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import grioteImage from "@/assets/griote.jpg";
+import { Button } from "../../components/ui/button";
+import grioteImage from "../../assets/griote.jpg";
 
 interface HeroSectionProps {
   isAuthenticated?: boolean;
