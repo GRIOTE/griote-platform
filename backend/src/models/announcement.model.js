@@ -8,14 +8,15 @@ const Announcement = sequelize.define('Announcement', {
     autoIncrement: true
   },
   author_id: { type: DataTypes.INTEGER, allowNull: false },
-  title: { type: DataTypes.STRING, allowNull: false },
-  content: { type: DataTypes.TEXT, allowNull: false },
-  status: {
+  titre: { type: DataTypes.STRING, allowNull: false },
+  contenu: { type: DataTypes.TEXT, allowNull: false },
+  statut: {
     type: DataTypes.ENUM('pending', 'published', 'archived'),
     defaultValue: 'pending'
   },
-  created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-  published_at: { type: DataTypes.DATE, allowNull: true }
+  date_creation: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+  date_publication: { type: DataTypes.DATE, allowNull: true },
+  image_apercu_id: { type: DataTypes.INTEGER, allowNull: true }
 }, {
   tableName: 'announcements',
   timestamps: false

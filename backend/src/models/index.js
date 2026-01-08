@@ -62,6 +62,8 @@ Announcement.hasMany(Image, {
 });
 Image.belongsTo(Announcement, { foreignKey: 'imageable_id', constraints: false });
 
+Announcement.belongsTo(Image, { foreignKey: 'image_apercu_id', as: 'previewImage' });
+
 Announcement.belongsTo(User, { foreignKey: 'author_id', as: 'author' });
 User.hasMany(Announcement, { foreignKey: 'author_id' });
 

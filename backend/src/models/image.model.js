@@ -9,7 +9,7 @@ const Image = sequelize.define('Image', {
     type: DataTypes.ENUM('announcement', 'user', 'depot'),
     allowNull: false
   },
-  imageable_id: { type: DataTypes.INTEGER, allowNull: false }
+  imageable_id: { type: DataTypes.INTEGER, allowNull: true }
 }, {
   tableName: 'images',
   timestamps: true,
