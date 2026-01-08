@@ -101,10 +101,12 @@ async function login(req, res) {
 
 async function refreshToken(req, res) {
   try {
-    const dto = refreshDTO({ refreshToken: req.cookies.rt });
+    const dto = refreshDTO({
+      refreshToken: req.cookies.rt || req.body.refreshToken || req.headers['x-refresh-token']
+    });
 
     if (!dto.refreshToken) {
-      logger.warn('No refresh token in cookie');
+      logger.warn('No refresh token provided');
       return res.status(401).json({ message: 'No refresh token provided' });
     }
 
