@@ -4,11 +4,11 @@ import { ArrowLeft, Calendar, User } from 'lucide-react';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
-import { getAnnouncementById, Announcement as BackendAnnouncement, AnnouncementImage } from '@/services/announcement.service';
+import { getAnnouncementById, Announcement, AnnouncementImage } from '@/services/announcement.service';
 
 const AnnouncementDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [announcement, setAnnouncement] = useState<BackendAnnouncement | null>(null);
+  const [announcement, setAnnouncement] = useState<Announcement | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,10 +77,10 @@ const AnnouncementDetail = () => {
         </div>
 
         {/* Main Image */}
-        {announcement.imageApercu && (
+        {announcement.previewImage && (
           <div className="mb-8">
             <img
-              src={announcement.imageApercu.url}
+              src={announcement.previewImage.url}
               alt={announcement.titre}
               className="w-full max-h-96 object-cover rounded-lg shadow-lg"
             />
@@ -115,13 +115,13 @@ const AnnouncementDetail = () => {
         </div>
 
         {/* Additional Images */}
-        {announcement.Images && announcement.Images.length > 0 && (
+        {announcement.images && announcement.images.length > 0 && (
           <div className="mt-12">
             <h2 className="text-2xl font-bold text-griote-gray-800 mb-6">
               Images supplémentaires
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {announcement.Images.map((image: AnnouncementImage) => (
+              {announcement.images.map((image: AnnouncementImage) => (
                 <img
                   key={image.id}
                   src={image.url}

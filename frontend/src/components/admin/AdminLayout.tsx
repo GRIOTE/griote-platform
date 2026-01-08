@@ -14,8 +14,8 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
+} from "../../components/ui/sidebar"
+import { Button } from "../../components/ui/button"
 import {
   BarChart3,
   Users,
@@ -25,7 +25,7 @@ import {
   LogOut,
   Megaphone
 } from "lucide-react"
-import { useAuth } from "@/auth/useAuth"
+import { useAuth } from "../../auth/useAuth"
 
 const menuItems = [
   {

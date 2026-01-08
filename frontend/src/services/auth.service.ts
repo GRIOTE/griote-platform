@@ -1,5 +1,5 @@
 // src/services/auth.service.ts
-import api from '@/lib/axios';
+import api from '../lib/axios';
 
 export interface User {
   user_id: string;
