@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
-import AnnouncementCard, { Announcement as FrontendAnnouncement } from '@/components/AnnouncementCard';
-import { getPublishedAnnouncements, Announcement as BackendAnnouncement } from '@/services/announcement.service';
+import AnnouncementCard, { Announcement } from '@/components/AnnouncementCard';
+import { getPublishedAnnouncements } from '@/services/announcement.service';
 import { useAuth } from '@/auth/useAuth';
 import { Button } from '@/components/ui/button';
 import { Megaphone, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Announcements = () => {
-  const [announcements, setAnnouncements] = useState<FrontendAnnouncement[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isAuthenticated, logout } = useAuth();
@@ -20,23 +20,8 @@ const Announcements = () => {
       try {
         setIsLoading(true);
 
-        const data: BackendAnnouncement[] = await getPublishedAnnouncements();
-
-        // Convert backend to frontend type
-        const converted: FrontendAnnouncement[] = data.map((ann: BackendAnnouncement) => ({
-          id: ann.id.toString(),
-          title: ann.titre,
-          description: ann.contenu,
-          publishedAt: ann.date_publication || ann.date_creation,
-          media: ann.imageApercu
-            ? { type: 'IMAGE' as const, url: ann.imageApercu.url }
-            : undefined,
-          type: 'OPPORTUNITY' as const,
-          priority: 'MEDIUM' as const,
-          tags: []
-        }));
-
-        setAnnouncements(converted);
+        const data = await getPublishedAnnouncements();
+        setAnnouncements(data);
       } catch (err) {
         console.error('Error fetching announcements:', err);
         setError('Erreur lors du chargement des annonces');
@@ -95,7 +80,7 @@ const Announcements = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {announcements.map((announcement) => (
                     <AnnouncementCard
-                      key={announcement.id}
+                      key={announcement.announcement_id}
                       announcement={announcement}
                       onView={handleAnnouncementClick}
                     />

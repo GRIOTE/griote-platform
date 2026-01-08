@@ -1,15 +1,15 @@
 // src/routes/AdminRoutes.tsx
 
 import { Routes, Route } from "react-router-dom";
-import ProtectedRoute from "@/auth/ProtectedRoute";
-import AdminLayout from "@/components/admin/AdminLayout"; // ou ton chemin exact
+import ProtectedRoute from "../auth/ProtectedRoute";
+import AdminLayout from "../components/admin/AdminLayout"; // ou ton chemin exact
 
-import AdminStats from "@/pages/admin/AdminStats";
-import AdminAnnouncements from "@/pages/admin/AdminAnnouncements";
-import AdminUsers from "@/pages/admin/AdminUsers";
-import AdminCategories from "@/pages/admin/AdminCategories";
-import AdminTags from "@/pages/admin/AdminTags";
-import AdminDepots from "@/pages/admin/AdminDepots";
+import AdminStats from "../pages/admin/AdminStats";
+import AdminAnnouncements from "../pages/admin/announcements/AdminAnnouncements";
+import AdminUsers from "../pages/admin/users/AdminUsers";
+import AdminCategories from "../pages/admin/categories/AdminCategories";
+import AdminTags from "../pages/admin/tags/AdminTags";
+import AdminDepots from "../pages/admin/AdminDepots";
 
 export default function AdminRoutes() {
   return (

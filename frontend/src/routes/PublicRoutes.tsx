@@ -14,6 +14,7 @@ import Contributeurs from "@/pages/Contributeurs"
 import CestQuoiGriote from "@/pages/CestQuoiGriote"
 import InterfaceSelection from "@/pages/InterfaceSelection"
 import AnnouncementDetail from "@/pages/AnnouncementDetail"
+import ExploreDepots from "@/pages/ExploreDepots"
 
 export default function PublicRoutes() {
   const { isAuthenticated, isLoading } = useAuth()
@@ -52,6 +53,9 @@ export default function PublicRoutes() {
 
       {/* Explorer (devient la base logique après login) */}
       <Route path="/recherche" element={<Recherche />} />
+
+      {/* Explorer les dépôts - En construction */}
+      <Route path="/depots" element={<ExploreDepots />} />
 
       {/* Autres routes publiques */}
       <Route path="/verify-email" element={<VerifyEmail />} />

@@ -1,9 +1,9 @@
+// user service
+
 const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { User, Image } = require('../models');
 const minioService = require('./minio.service');
-
-
 
 /**
  * Get full profile of a user (safe)
@@ -12,11 +12,6 @@ async function getFullProfile(user_id) {
   const user = await User.findByPk(user_id, {
     attributes: { exclude: ['password_hash'] },
     include: [
-      {
-        model: Image,
-        as: 'profilePicture',
-        required: false
-      },
       {
         model: Image,
         as: 'images',
@@ -30,7 +25,17 @@ async function getFullProfile(user_id) {
     throw new Error('User not found');
   }
 
-  return user;
+  // Get the latest profile picture (most recent image for this user)
+  const latestImage = await Image.findOne({
+    where: { imageable_type: 'user', imageable_id: user_id },
+    order: [['created_at', 'DESC']]
+  });
+
+  // ✅ CORRECTION : Convertir en objet plain et ajouter profile_picture
+  const userJson = user.toJSON();
+  userJson.profile_picture = latestImage?.url || null;
+
+  return userJson;
 }
 
 /**
@@ -94,11 +99,10 @@ async function deleteUser(user_id) {
 
   await user.destroy();
   return { message: 'User deleted successfully' };
-
 }
 
 /**
- * 
+ * Change password
  */
 async function changePassword(user_id, oldPassword, newPassword) {
   const user = await User.findByPk(user_id);
@@ -125,10 +129,11 @@ async function changePassword(user_id, oldPassword, newPassword) {
 async function setProfilePicture(user_id, file, description = 'Profile picture') {
   if (!file) throw new Error('Fichier manquant');
 
-  // Supprimer l’ancienne image
+  // Supprimer l'ancienne image
   const oldImages = await Image.findAll({
     where: { imageable_type: 'user', imageable_id: user_id }
   });
+
   for (const img of oldImages) {
     await minioService.deleteFile(img.url);
     await img.destroy();
@@ -137,7 +142,7 @@ async function setProfilePicture(user_id, file, description = 'Profile picture')
   // Upload sur MinIO
   const url = await minioService.uploadFile(file, 'profile-pictures');
 
-  // Créer l’entrée BDD
+  // Créer l'entrée BDD
   const profileImage = await Image.create({
     url,
     description,
@@ -145,7 +150,8 @@ async function setProfilePicture(user_id, file, description = 'Profile picture')
     imageable_id: user_id
   });
 
-  return profileImage;
+  // ✅ CORRECTION : Retourner l'objet avec l'URL
+  return profileImage.toJSON();
 }
 
 async function removeProfilePicture(user_id) {
@@ -160,8 +166,6 @@ async function removeProfilePicture(user_id) {
 
   return { message: 'Profile picture removed successfully' };
 }
-
-
 
 /* =====================================================
    ADMIN — opérations globales / gestion utilisateurs
@@ -316,4 +320,3 @@ module.exports = {
   updateUserRole,
   updateUser
 };
-

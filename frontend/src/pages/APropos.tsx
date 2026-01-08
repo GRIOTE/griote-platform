@@ -1,11 +1,11 @@
 import React from 'react';
-import Header from '@/components/Layout/Header';
-import Footer from '@/components/Layout/Footer';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/auth/useAuth';
+import Header from '../components/Layout/Header';
+import Footer from '../components/Layout/Footer';
+import { Button } from '../components/ui/button';
+import { useAuth } from '../auth/useAuth';
 import { Link } from 'react-router-dom';
 import { Archive, Lightbulb, Target, Users, ArrowRight } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { Card } from '../components/ui/card';
 
 const APropos = () => {
   const { isAuthenticated, logout } = useAuth();

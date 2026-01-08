@@ -1,5 +1,5 @@
 // src/services/mon-compte.service.ts
-import api from '@/lib/axios';
+import api from '../lib/axios';
 import { User } from './auth.service';
 
 // Récupérer le profil de l'utilisateur connecté
