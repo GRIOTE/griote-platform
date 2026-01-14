@@ -1,6 +1,6 @@
 // src/services/announcement.service.ts
 import api from '../lib/axios';
-import {
+import type {
   Announcement,
   AnnouncementImage,
   CreateAnnouncementData,

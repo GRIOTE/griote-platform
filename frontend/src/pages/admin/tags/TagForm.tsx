@@ -3,14 +3,14 @@ import { Input } from "../../../components/ui/input"
 import { Button } from "../../../components/ui/button"
 import { Label } from "../../../components/ui/label"
 import { DialogFooter } from "../../../components/ui/dialog"
-import type { TagFormData } from "./types"
 
 interface Props {
   initialValues?: {
     name: string
   }
   loading?: boolean
-  onSubmit: (data: TagFormData) => void
+  onSubmit: (data: { name: string }) => void
+
 }
 
 export default function TagForm({ initialValues, loading, onSubmit }: Props) {
