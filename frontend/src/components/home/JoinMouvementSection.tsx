@@ -23,7 +23,7 @@ export default function JoinMovementSection() {
           {/* Grand bouton CTA */}
           <div>
             <a
-              href="/recherche"
+              href="/depots"
               className="group inline-flex items-center gap-6 text-2xl lg:text-3xl font-black text-black px-12 py-8 rounded-3xl bg-white hover:bg-white/95 shadow-2xl hover:shadow-[0_30px_80px_rgba(0,0,0,0.35)] transition-all duration-500 transform hover:scale-105"
             >
               <Sparkles className="w-10 h-10 lg:w-12 lg:h-12 group-hover:rotate-12 transition-transform duration-500" strokeWidth={2.5} />

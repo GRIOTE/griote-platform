@@ -28,6 +28,7 @@ node_modules/
 .env.test
 .env.production
 .env.local
+.env.prod
 
 # Optional npm cache directory
 .npm

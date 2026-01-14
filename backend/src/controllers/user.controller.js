@@ -1,12 +1,7 @@
 const userService = require('../services/user.service');
 const { User, Image } = require('../models');
+const logger = require('../config/logger.config');
 
-/* ========================= USER PROFILE ========================= */
-
-/**
- * Get current user profile
- * GET /api/users/me
- */
 async function getProfile(req, res) {
   try {
     const profile = await userService.getFullProfile(req.user.id);
@@ -16,42 +11,29 @@ async function getProfile(req, res) {
   }
 }
 
-/**
- * Update current user profile
- * PUT /api/users/me
- */
 async function updateProfile(req, res) {
   try {
-    console.log('updateProfile called with body:', req.body);
     const updatedProfile = await userService.updateFullProfile(
       req.user.id,
       req.body
     );
-    console.log('updateProfile returning:', updatedProfile.first_name);
+    logger.info('Profile updated', { context: { userId: req.user.id } });
     return res.status(200).json(updatedProfile);
   } catch (err) {
-    console.log('updateProfile error:', err.message);
     return res.status(400).json({ message: err.message });
   }
 }
 
-/**
- * Delete own account
- * DELETE /api/users/me
- */
 async function deleteMyAccount(req, res) {
   try {
     const result = await userService.deleteUser(req.user.id);
+    logger.info('Account deleted', { context: { userId: req.user.id } });
     return res.status(200).json(result);
   } catch (err) {
     return res.status(404).json({ message: err.message });
   }
 }
 
-/**
- * Upload/update profile picture
- * POST /api/users/me/profile-picture
- */
 async function setProfilePicture(req, res) {
   try {
     if (!req.file) {
@@ -103,6 +85,8 @@ async function changePassword(req, res) {
       newPassword
     );
 
+    logger.info('Password changed', { context: { userId: req.user.id } });
+
     return res.status(200).json(result);
   } catch (err) {
     return res.status(400).json({ message: err.message });
@@ -133,6 +117,7 @@ async function getUserById(req, res) {
 async function createAdmin(req, res) {
   try {
     const admin = await userService.createAdmin(req.body);
+    logger.info('Admin created', { context: { adminId: req.user.id, newAdminId: admin.user_id } });
     return res.status(201).json(admin);
   } catch (err) {
     return res.status(400).json({ message: err.message });
@@ -143,6 +128,7 @@ async function updateUserRole(req, res) {
   try {
     const { role } = req.body;
     const updatedUser = await userService.updateUserRole(req.params.id, role);
+    logger.info('User role updated', { context: { adminId: req.user.id, userId: req.params.id, newRole: role } });
     return res.status(200).json(updatedUser);
   } catch (err) {
     return res.status(400).json({ message: err.message });
@@ -161,6 +147,7 @@ async function updateUser(req, res) {
 async function deleteUser(req, res) {
   try {
     const result = await userService.deleteUser(req.params.id);
+    logger.info('User deleted', { context: { adminId: req.user.id, userId: req.params.id } });
     return res.status(200).json(result);
   } catch (err) {
     return res.status(404).json({ message: err.message });

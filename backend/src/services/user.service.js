@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { User, Image } = require('../models');
 const minioService = require('./minio.service');
+const logger = require('../config/logger.config');
 
 /**
  * Get full profile of a user (safe)
@@ -42,7 +43,6 @@ async function getFullProfile(user_id) {
  * Update full profile (self)
  */
 async function updateFullProfile(user_id, data) {
-  console.log('updateFullProfile called with data:', data);
   const user = await User.findByPk(user_id);
   if (!user) {
     throw new Error('User not found');
@@ -58,7 +58,6 @@ async function updateFullProfile(user_id, data) {
     date_of_birth
   } = data;
 
-  console.log('Before update:', { first_name: user.first_name, last_name: user.last_name, bio: user.bio });
   if (first_name !== undefined) user.first_name = first_name;
   if (last_name !== undefined) user.last_name = last_name;
   if (bio !== undefined) user.bio = bio;
@@ -68,7 +67,6 @@ async function updateFullProfile(user_id, data) {
   if (date_of_birth !== undefined) user.date_of_birth = date_of_birth;
 
   await user.save();
-  console.log('After update:', { first_name: user.first_name, last_name: user.last_name, bio: user.bio });
 
   return getFullProfile(user_id);
 }
@@ -217,6 +215,7 @@ async function createAdmin(adminData) {
 
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
+    logger.warn('Admin creation failed: email already exists', { context: { email } });
     throw new Error('User with this email already exists');
   }
 
@@ -241,6 +240,7 @@ async function createAdmin(adminData) {
 async function updateUserRole(user_id, newRole) {
   const validRoles = ['USER', 'ADMIN'];
   if (!validRoles.includes(newRole)) {
+    logger.warn('Role update failed: invalid role', { context: { userId: user_id, role: newRole } });
     throw new Error('Invalid role specified');
   }
 
@@ -294,6 +294,7 @@ async function updateUser(user_id, updateData) {
     });
 
     if (existingUser) {
+      logger.warn('User update failed: email already in use', { context: { userId, email: filteredData.email } });
       throw new Error('Email already in use');
     }
   }

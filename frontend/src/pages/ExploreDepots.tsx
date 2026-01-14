@@ -12,7 +12,6 @@ export default function ExploreDepots() {
 
   return (
     <div className="min-h-screen bg-griote-white">
-      <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
 
       <main className="py-16">
         <div className="container mx-auto px-4">

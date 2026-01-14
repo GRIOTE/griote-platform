@@ -1,32 +1,37 @@
 // src/components/Layout/Header.tsx
-import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { Menu, X, LogOut, Home, Search, Megaphone, Info } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { useAuth } from "@/auth/useAuth"
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, Home, Search, Megaphone, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/auth/useAuth";
 
-import GrioteLogo from "@/assets/griote.svg"
+import GrioteLogo from "@/assets/griote.svg";
 
 const getNavItems = (isAuthenticated: boolean) => {
   const baseItems = [
-    { name: "Explorer", href: "/recherche", icon: Search },
+    { name: "Explorer", href: "/depots", icon: Search },
     { name: "Annonces", href: "/annonces", icon: Megaphone },
     { name: "À propos", href: "/a-propos", icon: Info },
-  ]
+  ];
 
   if (!isAuthenticated) {
-    return [{ name: "Accueil", href: "/", icon: Home }, ...baseItems]
+    return [{ name: "Accueil", href: "/", icon: Home }, ...baseItems];
   }
 
-  return baseItems
-}
+  return baseItems;
+};
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { pathname } = useLocation()
-  const { isAuthenticated, logout, isLoading, user } = useAuth()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+  const { isAuthenticated, logout, isLoading, user } = useAuth();
 
-  const navItems = getNavItems(isAuthenticated)
+  const navItems = getNavItems(isAuthenticated);
+
+  const handleLogout = async () => {
+    await logout(); // logout du contexte, met à jour state global
+    setMobileMenuOpen(false); // ferme le menu mobile si ouvert
+  };
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur">
@@ -48,11 +53,10 @@ export default function Header() {
           <nav className="hidden lg:flex flex-1 justify-center">
             <div className="flex gap-8">
               {navItems.map((item) => {
-                const Icon = item.icon
+                const Icon = item.icon;
                 const isActive =
                   pathname === item.href ||
-                  (item.href !== "/" && pathname.startsWith(item.href))
-
+                  (item.href !== "/" && pathname.startsWith(item.href));
                 return (
                   <Link
                     key={item.name}
@@ -67,7 +71,7 @@ export default function Header() {
                     <Icon className="h-4 w-4" />
                     {item.name}
                   </Link>
-                )
+                );
               })}
             </div>
           </nav>
@@ -101,7 +105,7 @@ export default function Header() {
                       Mon compte
                     </button>
                   </Link>
-                  {user?.role === 'ADMIN' && (
+                  {user?.role === "ADMIN" && (
                     <Link to="/admin/stats">
                       <button className="px-4 py-2 text-sm bg-accent rounded-lg hover:bg-accent/80 transition-colors">
                         Panneau d'administration
@@ -109,7 +113,7 @@ export default function Header() {
                     </Link>
                   )}
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="flex items-center gap-2 px-4 py-2 text-sm border rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors"
                   >
                     <LogOut className="h-4 w-4" />
@@ -135,7 +139,7 @@ export default function Header() {
         <div className="lg:hidden border-t">
           <div className="px-6 py-5 space-y-2">
             {navItems.map((item) => {
-              const Icon = item.icon
+              const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
@@ -146,7 +150,7 @@ export default function Header() {
                   <Icon className="h-5 w-5" />
                   {item.name}
                 </Link>
-              )
+              );
             })}
 
             <div className="pt-4 border-t">
@@ -174,7 +178,7 @@ export default function Header() {
                       Mon compte
                     </button>
                   </Link>
-                  {user?.role === 'ADMIN' && (
+                  {user?.role === "ADMIN" && (
                     <Link to="/admin/stats">
                       <button className="w-full py-3 bg-accent rounded-lg">
                         Panneau d'administration
@@ -182,10 +186,7 @@ export default function Header() {
                     </Link>
                   )}
                   <button
-                    onClick={() => {
-                      logout()
-                      setMobileMenuOpen(false)
-                    }}
+                    onClick={handleLogout}
                     className="w-full py-3 border rounded-lg"
                   >
                     Se déconnecter
@@ -197,5 +198,5 @@ export default function Header() {
         </div>
       )}
     </header>
-  )
+  );
 }

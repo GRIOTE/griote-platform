@@ -58,7 +58,7 @@ const RecentDepositsSection = ({ recentDepots, handleDepotView, handleDepotDownl
         </div>
 
         <div className="text-center">
-          <Link to="/recherche">
+          <Link to="/depots">
             <Button className="bg-griote-blue text-white hover:bg-griote-blue-dark text-lg px-8 py-4 rounded-lg font-semibold transition-colors duration-300">
               Voir tous les dépôts
               <ArrowRight className="w-5 h-5 ml-2" />

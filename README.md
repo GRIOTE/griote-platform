@@ -24,16 +24,18 @@ Griote Platform collects, structures, and preserves academic works, traditional 
 ### User Space
 
 * Account creation and secure authentication
-* Upload academic works, personal projects, source code, datasets
-* Public or private visibility control
-* Categorization, tagging, and full-text search
-* Download of public resources
+* Profile management
 
-### Scholarship Module (Graduate Students)
 
-* Dedicated space for Master’s level and above
-* Apply to themed scholarship programs
-* Document submission and real-time tracking
+### Admin Space
+
+* Manage users
+* Moderate announcements
+* Category management 
+* Tag management 
+
+
+
 
 ---
 

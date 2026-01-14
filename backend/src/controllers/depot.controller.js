@@ -1,113 +1,106 @@
-const { Depot, Document, DepotTag } = require('../models');
-const minioService = require('../services/minio.service');
+const depotService = require('../services/depot.service');
 
-exports.create = async (req, res) => {
-  const t = await Depot.sequelize.transaction();
+const createDepotController = async (req, res) => {
   try {
     const { title, description, category_id, tag_ids } = req.body;
-    const files = req.files || [];
+    const depot = await depotService.createDepot({ title, description, category_id, tag_ids }, req.user.user_id);
+    res.status(201).json(depot);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-    // 1. Créer le dépôt
-    const depot = await Depot.create({
-      owner_id: req.user.user_id,
-      title, description, category_id,
-      status: 'DRAFT'
-    }, { transaction: t });
-
-    // 2. Upload tous les fichiers vers MinIO
-    const docs = await Promise.all(
-      files.map(async (file) => {
-        const url = await minioService.upload(file, `depot-${depot.depot_id}`);
-        return {
-          depot_id: depot.depot_id,
-          owner_id: req.user.user_id,
-          filename: file.originalname,
-          url: url,
-          file_type: file.mimetype,
-          file_size: file.size
-        };
-      })
-    );
-    await Document.bulkCreate(docs, { transaction: t });
-
-    // 3. Ajouter les tags
-    if (tag_ids?.length) {
-      const mappings = tag_ids.map(tag_id => ({
-        depot_id: depot.depot_id,
-        tag_id
-      }));
-      await Depot.sequelize.models.DepotTagMapping.bulkCreate(mappings, { transaction: t });
+const getDepotController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const depot = await depotService.getDepotById(id);
+    res.json(depot);
+  } catch (error) {
+    if (error.message === 'Depot not found') {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: error.message });
     }
-
-    await t.commit();
-    res.status(201).json({ depot_id: depot.depot_id, files_uploaded: files.length });
-  } catch (err) {
-    await t.rollback();
-    res.status(500).json({ error: err.message });
   }
 };
 
-exports.mine = async (req, res) => {
-  const depots = await Depot.findAll({
-    where: { owner_id: req.user.user_id },
-    include: [
-      'category',
-      { model: Document, as: 'documents' },
-      { model: DepotTag, as: 'tags', through: { attributes: [] } }
-    ],
-    order: [['created_at', 'DESC']]
-  });
-  res.json(depots);
-};
-
-exports.listAll = async (req, res) => {
-  const depots = await Depot.findAll({
-    include: [
-      'category',
-      { model: Document, as: 'documents' },
-      { model: DepotTag, as: 'tags', through: { attributes: [] } }
-    ],
-    order: [['created_at', 'DESC']]
-  });
-  res.json(depots);
-};
-
-exports.update = async (req, res) => {
-  const { depot_id } = req.params;
-  const [n] = await Depot.update(req.body, { where: { depot_id } });
-  if (!n) return res.status(404).json({ error: 'Not found' });
-  const depot = await Depot.findByPk(depot_id, {
-    include: [
-      'category',
-      { model: Document, as: 'documents' },
-      { model: DepotTag, as: 'tags', through: { attributes: [] } }
-    ]
-  });
-  res.json(depot);
-};
-
-exports.delete = async (req, res) => {
-  const { depot_id } = req.params;
-  const n = await Depot.destroy({ where: { depot_id } });
-  n ? res.json({ ok: true }) : res.status(404).json({ error: 'Not found' });
-};
-
-/* ========================= STATS ENDPOINTS ========================= */
-
-exports.getTotalDepots = async (req, res) => {
+const listDepotsController = async (req, res) => {
   try {
-    const count = await Depot.count();
-    return res.json({ totalDepots: count });
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+    const filters = {};
+    if (req.query.status) filters.status = req.query.status;
+    if (req.query.owner_id) filters.owner_id = req.query.owner_id;
+    if (req.query.category_id) filters.category_id = req.query.category_id;
+    const depots = await depotService.getAllDepots(filters);
+    res.json(depots);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
-exports.getTotalDocuments = async (req, res) => {
+const updateDepotController = async (req, res) => {
   try {
-    const count = await Document.count();
-    return res.json({ totalDocuments: count });
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
+    const { id } = req.params;
+    const depot = await depotService.updateDepot(id, req.body);
+    res.json(depot);
+  } catch (error) {
+    if (error.message === 'Depot not found') {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
   }
+};
+
+const deleteDepotController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await depotService.deleteDepot(id);
+    res.json({ message: 'Depot deleted successfully' });
+  } catch (error) {
+    if (error.message === 'Depot not found') {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+const addDocumentController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const file = req.file;
+    if (!file) return res.status(400).json({ error: 'No file provided' });
+    const document = await depotService.addDocumentToDepot(id, { file }, req.user.user_id);
+    res.status(201).json(document);
+  } catch (error) {
+    if (error.message === 'Depot not found') {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+const listDepotDocumentsController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const documents = await depotService.getDepotDocuments(id);
+    res.json(documents);
+  } catch (error) {
+    if (error.message === 'Depot not found') {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+module.exports = {
+  createDepotController,
+  getDepotController,
+  listDepotsController,
+  updateDepotController,
+  deleteDepotController,
+  addDocumentController,
+  listDepotDocumentsController
 };

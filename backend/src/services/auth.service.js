@@ -34,10 +34,6 @@ async function registerUserWithEmailToken(payload) {
   const emailToken = signEmail({ id: user.user_id, email: user.email });
   await mailService.sendVerificationEmail(user.email, emailToken);
   return { user, emailToken };
-
-  logger.info('User created', { user_id: user.user_id, email: user.email });
-
-
 }
 
 async function verifyEmailToken(token) {
@@ -60,24 +56,21 @@ async function resendVerificationEmail(email) {
 }
 
 async function login(email, password) {
-  logger.debug('Login attempt for:', email);
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    logger.warn('Login attempt with non-existent email:', email);
+    logger.warn('Login failed: user not found', { context: { email } });
     throw new Error('Invalid credentials');
   }
   if (!user.is_email_verified) {
-    logger.warn('Login attempt with unverified account:', email);
+    logger.warn('Login failed: email not verified', { context: { email } });
     throw new Error('Account not verified');
   }
 
   const ok = await comparePassword(password, user.password_hash);
   if (!ok) {
-    logger.warn('Incorrect password for:', email);
+    logger.warn('Login failed: incorrect password', { context: { email } });
     throw new Error('Incorrect password');
   }
-
-  logger.info('Successful login for:', email);
 
   const payload = { id: user.user_id, role: user.role };
   const accessToken = signAccess(payload);
@@ -90,20 +83,17 @@ async function login(email, password) {
 }
 
 async function refreshTokens(oldRefresh) {
-  logger.debug('Refresh token attempt with token:', oldRefresh ? 'present' : 'missing');
   const dbToken = await RefreshToken.findOne({ where: { token: oldRefresh } });
   if (!dbToken) {
-    logger.warn('Refresh token not found in DB');
+    logger.warn('Refresh failed: token not found', { context: { tokenPresent: !!oldRefresh } });
     throw new Error('Invalid refresh token');
   }
 
-  logger.debug('DB token found, expires at:', dbToken.expires_at);
   let payload;
   try {
     payload = verify(oldRefresh);
-    logger.debug('JWT verified successfully, payload:', payload);
   } catch (e) {
-    logger.warn('JWT verification failed:', e.message);
+    logger.warn('Refresh failed: invalid JWT', { context: { error: e.message } });
     await dbToken.destroy();
     throw new Error('Invalid or expired refresh token');
   }
@@ -111,11 +101,10 @@ async function refreshTokens(oldRefresh) {
   // Récupère l'utilisateur frais (au cas où des données auraient changé)
   const user = await User.findByPk(payload.id);
   if (!user) {
-    logger.warn('User not found for id:', payload.id);
+    logger.warn('Refresh failed: user not found', { context: { userId: payload.id } });
     throw new Error('User not found');
   }
 
-  logger.debug('Generating new tokens for user:', user.user_id);
   const newAccess = signAccess({ id: payload.id, role: payload.role });
   const newRefresh = signRefresh({ id: payload.id, role: payload.role });
   await dbToken.update({
@@ -123,12 +112,10 @@ async function refreshTokens(oldRefresh) {
     expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   });
 
-  logger.info('Refresh tokens successful for user:', user.user_id);
-  // ← AJOUT IMPORTANT
   return {
     accessToken: newAccess,
     refreshToken: newRefresh,
-    user // ← on renvoie l'utilisateur complet
+    user
   };
 }
 
@@ -166,7 +153,7 @@ async function resetPassword(token, newPassword) {
   const hashed = await hashPassword(newPassword);
   user.password_hash = hashed;
   await user.save();
-  return true;
+  return user;
 }
 
 
@@ -189,12 +176,7 @@ async function changePassword(user_id, oldPassword, newPassword) {
 
 
 async function findUserByEmail(email) {
-  try {
-    return await User.findOne({ where: { email } });
-  } catch (error) {
-    logger.error('Error finding user by email:', error);
-    throw new Error('Error finding user');
-  }
+  return await User.findOne({ where: { email } });
 }
 
 module.exports = {

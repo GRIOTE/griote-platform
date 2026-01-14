@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Calendar, ExternalLink, MapPin, Play, X } from 'lucide-react';
-import { Badge } from '../components/ui/badge';
-import { Button } from '../components/ui/button';
-import { Card, CardContent } from '../components/ui/card';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose
-} from '../components/ui/dialog';
+} from './ui/dialog';
 import DefaultAnnouncementImage from './DefaultAnnouncementImage';
 
 export interface Announcement {

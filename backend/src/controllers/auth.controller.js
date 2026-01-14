@@ -9,8 +9,6 @@ const requestPasswordResetDTO = require('../dtos/requestPasswordReset.dto');
 const resetPasswordDTO = require('../dtos/resetPassword.dto');
 const changePasswordDTO = require('../dtos/changePassword.dto');
 
-/* ========================= REGISTER ========================= */
-
 async function register(req, res) {
   try {
     await validateRegister(req.body);
@@ -19,6 +17,8 @@ async function register(req, res) {
 
     const { user, emailToken } =
       await authService.registerUserWithEmailToken(dto);
+
+    logger.info('User registered', { context: { userId: user.user_id, email: user.email } });
 
     return res.status(201).json({
       message: 'User registered. Please verify your email.',
@@ -39,31 +39,27 @@ async function register(req, res) {
   }
 }
 
-/* ========================= VERIFY EMAIL ========================= */
-
 async function verifyEmail(req, res) {
   try {
     const { token } = req.query;
-    await authService.verifyEmailToken(token);
+    const user = await authService.verifyEmailToken(token);
+    logger.info('Email verified', { context: { userId: user.user_id, email: user.email } });
     return res.json({ message: 'Email verified successfully' });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
 }
 
-/* ========================= RESEND VERIFICATION ========================= */
-
 async function resendVerificationEmail(req, res) {
   try {
     const { email } = req.body;
     await authService.resendVerificationEmail(email);
+    logger.info('Verification email resent', { context: { email } });
     return res.json({ message: 'Verification email sent successfully' });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
 }
-
-/* ========================= LOGIN ========================= */
 
 async function login(req, res) {
   try {
@@ -71,6 +67,8 @@ async function login(req, res) {
 
     const { accessToken, refreshToken, user } =
       await authService.login(dto.email, dto.password);
+
+    logger.info('User logged in', { context: { userId: user.user_id, email: user.email } });
 
     res.cookie('rt', refreshToken, {
       httpOnly: true,
@@ -87,17 +85,17 @@ async function login(req, res) {
     });
   } catch (err) {
     if (err.message === 'Account not verified') {
+      logger.warn('Login failed: email not verified', { context: { email: dto.email } });
       return res.status(400).json({
         code: 'EMAIL_NOT_VERIFIED',
         message: 'Votre email n\'est pas encore vérifié'
       });
     }
 
+    logger.warn('Login failed', { context: { email: dto.email } });
     return res.status(400).json({ message: err.message });
   }
 }
-
-/* ========================= REFRESH TOKEN ========================= */
 
 async function refreshToken(req, res) {
   try {
@@ -106,12 +104,10 @@ async function refreshToken(req, res) {
     });
 
     if (!dto.refreshToken) {
-      logger.warn('No refresh token provided');
       return res.status(401).json({ message: 'No refresh token provided' });
     }
 
-    // ← Le service renvoie maintenant { accessToken, refreshToken, user }
-    const { accessToken, refreshToken: newRefreshToken, user } = 
+    const { accessToken, refreshToken: newRefreshToken, user } =
       await authService.refreshTokens(dto.refreshToken);
 
     res.cookie('rt', newRefreshToken, {
@@ -122,18 +118,15 @@ async function refreshToken(req, res) {
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
-    // ← On renvoie accessToken + user
-    return res.json({ 
+    return res.json({
       accessToken,
-      user // ← ajouté ici
+      user
     });
   } catch (err) {
     res.clearCookie('rt', { path: '/api/auth/refresh' });
     return res.status(401).json({ message: err.message || 'Invalid refresh token' });
   }
 }
-
-/* ========================= LOGOUT ========================= */
 
 async function logout(req, res) {
   try {
@@ -161,12 +154,11 @@ async function logout(req, res) {
   }
 }
 
-/* ========================= PASSWORD RESET ========================= */
-
 async function requestPasswordReset(req, res) {
   try {
     const dto = requestPasswordResetDTO(req.body);
     await authService.requestPasswordReset(dto.email);
+    logger.info('Password reset requested', { context: { email: dto.email } });
     return res.json({ message: 'Password reset email sent' });
   } catch (err) {
     return res.status(400).json({ message: err.message });
@@ -176,14 +168,13 @@ async function requestPasswordReset(req, res) {
 async function resetPassword(req, res) {
   try {
     const dto = resetPasswordDTO(req.body);
-    await authService.resetPassword(dto.token, dto.newPassword);
+    const user = await authService.resetPassword(dto.token, dto.newPassword);
+    logger.info('Password reset', { context: { userId: user.user_id, email: user.email } });
     return res.json({ message: 'Password reset successful' });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
 }
-
-/* ========================= CHANGE PASSWORD ========================= */
 
 async function changePassword(req, res) {
   try {
@@ -193,6 +184,8 @@ async function changePassword(req, res) {
       dto.oldPassword,
       dto.newPassword
     );
+
+    logger.info('Password changed', { context: { userId: req.user.id } });
 
     return res.json({ message: 'Password changed successfully' });
   } catch (err) {

@@ -14,8 +14,8 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-} from "../../components/ui/sidebar"
-import { Button } from "../../components/ui/button"
+} from "../ui/sidebar"
+import { Button } from "../ui/button"
 import {
   BarChart3,
   Users,
