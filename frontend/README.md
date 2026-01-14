@@ -1,109 +1,73 @@
-# Griote Foundation (Frontend)
+# React + TypeScript + Vite
 
-Griote Foundation est une plateforme panafricaine valorisant les travaux de recherche (académiques ou personnels, tous niveaux) et facilitant l’accès aux bourses pour les niveaux Master et Doctorat. Ce dépôt contient le frontend du site web, construit avec **React**, **TypeScript**, **Vite**, et **Tailwind CSS**, avec une esthétique panafricaine (bleu profond #142393, jaune doré #FFDE59, motifs bogolan/kente).
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Fonctionnalités
+Currently, two official plugins are available:
 
-- **Accueil** : Barre de recherche centrale (inspirée de Pixabay), projets récents, mission de la fondation.
-- **Recherche de projets** : Exploration des projets publics avec filtres (mots-clés, thématiques, niveau, date).
-- **Dépôt de projets** : Soumission de travaux (PDF/ZIP, max 50 Mo) avec titre, description, tags, visibilité.
-- **Mes Dépôts** : Gestion des projets (modifier, supprimer, historique).
-- **Bourses** : Candidature et suivi des bourses M2/Doctorat (formulaire, documents, statut).
-- **Mon Compte** : Gestion du profil (nom, statut, parcours).
-- **À propos** : Mission et vision panafricaine.
-- **Connexion/Inscription** : Authentification sécurisée.
-- **Responsive** : Adapté à mobile, tablette, desktop.
-- **Accessibilité** : Contrastes WCAG, navigation clavier.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Structure
+## React Compiler
 
-```
-griote-foundation/
-├── public/
-│   ├── favicon.ico
-│   ├── placeholder.svg
-│   └── robots.txt
-├── src/
-│   ├── assets/
-│   │   ├── griote.svg
-│   │   ├── bogolan-pattern.png
-│   │   └── kente-pattern.png
-│   ├── components/
-│   │   ├── HeroSection.tsx
-│   │   ├── Layout/
-│   │   │   ├── Footer.tsx
-│   │   │   └── Header.tsx
-│   │   ├── ProjectCard.tsx
-│   │   ├── ui/
-│   │   └── WhyGrioteSection.tsx
-│   ├── pages/
-│   │   ├── APropos.tsx
-│   │   ├── Connexion.tsx
-│   │   ├── Depot.tsx
-│   │   ├── Bourses.tsx
-│   │   ├── Index.tsx
-│   │   ├── Inscription.tsx
-│   │   ├── NotFound.tsx
-│   │   └── Recherche.tsx
-│   ├── styles/
-│   │   └── griote.css
-│   ├── App.tsx
-│   ├── index.css
-│   ├── main.tsx
-│   └── vite-env.d.ts
-├── package.json
-├── pnpm-lock.yaml
-├── tailwind.config.ts
-├── tsconfig.json
-└── README.md
+The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## Installation
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-1. Clonez le dépôt :
-   ```bash
-   git clone https://github.com/brandoniscoding/griote-foundation.git
-   cd griote-foundation
-   ```
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-2. Installez les dépendances :
-   ```bash
-   pnpm install
-   ```
-
-3. Configurez l’environnement :
-   - Créez un fichier `.env` :
-     ```env
-     VITE_API_URL=https://griote-backend.example.com/api
-     ```
-
-4. Lancez le frontend :
-   ```bash
-   pnpm dev
-   ```
-   Accédez à `http://localhost:5173`.
-
-## Contribution
-
-1. Forkez le dépôt.
-2. Créez une branche : `git checkout -b feature/nouvelle-fonctionnalite`.
-3. Commitez vos changements : `git commit -m "Ajout de nouvelle-fonctionnalite"`.
-4. Poussez : `git push origin feature/nouvelle-fonctionnalite`.
-5. Ouvrez une pull request sur GitHub.
-
-## Technologies
-
-- **React** : v18
-- **TypeScript** : Typage statique
-- **Vite** : Build rapide
-- **Tailwind CSS** : Styles utilitaires
-- **Lucide React** : Icônes
-- **React Router** : Navigation
-
-## Backend
-
-Pour le backend, consultez le dépôt séparé : [griote-foundation-backend](https://github.com/brandoniscoding/griote-foundation-backend).
-
-## Contact
-
-Ouvrez une issue sur GitHub pour toute question ou suggestion.
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```

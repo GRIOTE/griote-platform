@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "../../components/ui/button";
+import { Button } from "../ui/button";
 import grioteImage from "../../assets/griote.jpg";
 
 interface HeroSectionProps {
@@ -39,7 +39,7 @@ export const HeroSection = () => {
 
             {/* BOUTON JAUNE SOUS LE TEXTE (à gauche sur desktop, centré sur mobile) */}
             <div className="flex justify-center lg:justify-start">
-              <Link to="/recherche">
+              <Link to="/depots">
                 <Button
                   size="lg"
                   className="px-10 py-6 bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"

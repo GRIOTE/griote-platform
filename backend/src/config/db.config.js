@@ -1,10 +1,9 @@
-// src/config/db.config.js
 const { Sequelize } = require('sequelize');
 const logger = require('./logger.config');
 require('dotenv').config();
 
 if (!process.env.DB_URI) {
-  logger.error('DB_URI manquant dans .env');
+  logger.error('DB_URI missing in .env');
   process.exit(1);
 }
 

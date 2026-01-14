@@ -30,7 +30,7 @@ const CestQuoiGriote = () => {
                 <a href="/inscription" className="bg-griote-accent text-griote-blue hover:bg-griote-accent-light px-8 py-4 rounded-lg font-semibold transition-colors">
                   Rejoindre la communauté
                 </a>
-                <a href="/recherche" className="border-2 border-griote-white text-griote-white hover:bg-griote-white hover:text-griote-blue px-8 py-4 rounded-lg font-semibold transition-colors">
+                <a href="/depots" className="border-2 border-griote-white text-griote-white hover:bg-griote-white hover:text-griote-blue px-8 py-4 rounded-lg font-semibold transition-colors">
                   Explorer les dépôts
                 </a>
               </div>

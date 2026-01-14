@@ -38,7 +38,7 @@ const APropos = () => {
                   Rejoindre la communauté
                 </Button>
               </Link>
-              <Link to="/recherche">
+              <Link to="/depots">
                 <Button variant="outline" size="lg" className="px-12 py-8 text-2xl font-bold bg-transparent border-white text-white hover:bg-white/10 transition-all inline-flex items-center gap-3">
                   Explorer les dépôts
                   <ArrowRight className="w-6 h-6 ml-3" />

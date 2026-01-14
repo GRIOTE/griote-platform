@@ -36,7 +36,7 @@ export default function Footer() {
 
           {/* === Navigation compacte === */}
           <div className="grid grid-cols-2 gap-y-3 text-sm">
-            <Link to="/recherche" className="hover:underline">Explorer</Link>
+            <Link to="/depots" className="hover:underline">Explorer</Link>
             <Link to="/annonces" className="hover:underline">Annonces</Link>
             <Link to="/projets-open-source" className="hover:underline">Open source</Link>
             <Link to="/a-propos" className="hover:underline">À propos</Link>

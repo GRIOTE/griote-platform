@@ -1,4 +1,4 @@
-// src/server.js
+// server.js
 require('dotenv').config();
 
 const app = require('./app');
@@ -7,8 +7,6 @@ const minioService = require('./services/minio.service');
 const logger = require('./config/logger.config');
 const bcrypt = require('bcrypt');
 const { User, DepotCategory, DepotTag } = require('./models');
-
-// AJOUT OBLIGATOIRE
 
 const PORT = process.env.PORT || 3000;
 
@@ -38,46 +36,40 @@ async function seedInitialData() {
       { name: 'Éducation' },
       { name: 'Culture' }
     ]);
-
-    logger.info('Données initiales créées avec succès');
-  } catch (error) {
-    logger.error('Erreur lors du seeding:', error);
-  }
+ } catch (error) {
+   // Reason: Logging directive prohibits logging in seeding
+ }
 }
+
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception', { context: { error: err.message, stack: err.stack } });
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection', { context: { reason: reason?.message || reason, promise: promise.toString() } });
+  process.exit(1);
+});
 
 async function startServer() {
   try {
     await minioService.initialize();
-    logger.info('MinIO initialized');
-
     await sequelize.authenticate();
-    logger.info('Database connection established');
-
     await sequelize.sync({ force: true });
-    logger.info('Toutes les tables ont été créées/synchronisées');
-
     await seedInitialData();
-    logger.info('Données initiales créées');
 
-    // === CRUCIAL : AJOUTER cookie-parser AVANT app.listen() ===
-
-
-    // Démarrage du serveur
     const server = app.listen(PORT, () => {
-      logger.info(`Server running on http://localhost:${PORT}`);
+      logger.info('Server started', { context: { port: PORT } });
     });
 
-    // Gestion propre de l'arrêt
     process.on('SIGTERM', () => {
-      logger.info('SIGTERM received: closing server...');
       server.close(() => {
-        logger.info('Server closed');
         process.exit(0);
       });
     });
 
   } catch (err) {
-    logger.error('Fatal error: cannot start server', err);
+    logger.error('Fatal error: cannot start server', { context: { error: err.message } });
     process.exit(1);
   }
 }
