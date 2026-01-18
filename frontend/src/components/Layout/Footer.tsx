@@ -1,78 +1,102 @@
-import { Link } from 'react-router-dom';
-import GrioteLogo from '@/assets/griote.svg';
+// src/components/Layout/Footer.tsx
+import { Link } from "react-router-dom"
+import { Github, Twitter, Linkedin, Mail, ArrowUpRight } from "lucide-react"
+import { useAuth } from "@/auth/useAuth"
+import { Button } from "@/components/ui/button"
+import GrioteLogo from "@/assets/griote.svg"
 
-const Footer = () => {
+export default function Footer() {
+  const { isAuthenticated, user } = useAuth()
+
   return (
-    <footer className="bg-griote-blue border-t-4 border-griote-accent">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Logo et description */}
-          <div className="flex flex-col space-y-4">
-            <Link to="/" className="flex items-center space-x-3 transition-transform hover:scale-105">
-              <img src={GrioteLogo} alt="Griote Logo" className="w-10 h-10" />
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-griote-white leading-none">Griote</span>
-                <span className="text-[10px] font-medium text-griote-white/80 leading-tight">foundation</span>
+    <footer className="bg-foreground text-background">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+
+        {/* === Ligne principale === */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+
+          {/* === Identité & vision === */}
+          <div>
+            <Link to="/" className="flex items-center gap-3 mb-4">
+              <img src={GrioteLogo} alt="Griote" className="h-9 w-auto" />
+              <div className="flex flex-col leading-none">
+                <span className="text-xl font-bold tracking-tight">Griote</span>
+                <span className="text-[11px] uppercase tracking-widest text-background/60">
+                  Project-Africa
+                </span>
               </div>
             </Link>
-            <p className="text-griote-white/80 text-sm leading-relaxed">
-              Plateforme panafricaine dédiée à la valorisation des dépôts académiques 
-              et à l'accès aux bourses d'études supérieures.
+
+            <p className="text-sm leading-relaxed text-background/80 max-w-sm">
+              Plateforme panafricaine dédiée à la structuration,
+              la transmission et la valorisation des savoirs africains,
+              académiques et technologiques.
             </p>
           </div>
 
-          {/* Liens essentiels */}
-          <div>
-            <h4 className="text-griote-accent font-semibold mb-4">Liens rapides</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link 
-                  to="/recherche" 
-                  className="text-griote-white/80 hover:text-griote-accent text-sm transition-colors duration-300"
-                >
-                  Explorer les dépôts
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/recherche" 
-                  className="text-griote-white/80 hover:text-griote-accent text-sm transition-colors duration-300"
-                >
-                  Nos annonces
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/bourses" 
-                  className="text-griote-white/80 hover:text-griote-accent text-sm transition-colors duration-300"
-                >
-                  Opportunités disponibles
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/a-propos" 
-                  className="text-griote-white/80 hover:text-griote-accent text-sm transition-colors duration-300"
-                >
-                  À propos
-                </Link>
-              </li>
-            </ul>
+          {/* === Navigation compacte === */}
+          <div className="grid grid-cols-2 gap-y-3 text-sm">
+            <Link to="/depots" className="hover:underline">Explorer</Link>
+            <Link to="/annonces" className="hover:underline">Annonces</Link>
+            <Link to="/projets-open-source" className="hover:underline">Open source</Link>
+            <Link to="/a-propos" className="hover:underline">À propos</Link>
+
+            {!isAuthenticated ? (
+              <>
+                <Link to="/connexion" className="hover:underline">Connexion</Link>
+                <Link to="/inscription" className="hover:underline">Inscription</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/mon-compte" className="hover:underline">Mon espace</Link>
+                {user?.role === "ADMIN" && (
+                  <Link to="/admin/stats" className="hover:underline">
+                    Administration
+                  </Link>
+                )}
+              </>
+            )}
           </div>
+
+          {/* === Contact / CTA assumé === */}
+          <div className="flex flex-col items-start lg:items-end gap-5">
+
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-background/40 text-foreground hover:bg-background/10"
+            >
+              <a href="mailto:contact@griote.foundation" className="flex items-center gap-3">
+                Contacter la fondation
+                <Mail className="h-5 w-5" />
+              </a>
+            </Button>
+
+            <div className="flex gap-4 text-background/60">
+              <a href="https://github.com/griote-foundation" target="_blank" rel="noopener noreferrer">
+                <Github className="h-5 w-5 hover:text-background transition" />
+              </a>
+              <a href="https://twitter.com/griotefdn" target="_blank" rel="noopener noreferrer">
+                <Twitter className="h-5 w-5 hover:text-background transition" />
+              </a>
+              <a href="https://linkedin.com/company/griote-foundation" target="_blank" rel="noopener noreferrer">
+                <Linkedin className="h-5 w-5 hover:text-background transition" />
+              </a>
+            </div>
+          </div>
+
         </div>
 
-        {/* Bas de page */}
-        <div className="border-t border-griote-accent/30 mt-8 pt-8 text-center">
-          <p className="text-griote-white/60 text-sm">
-            © 2025 Fondation Griote. Tous droits réservés.
-          </p>
-          <p className="text-griote-white/60 text-sm mt-2">
-            Fait avec ❤️ pour l'Afrique
-          </p>
+        {/* === Ligne finale === */}
+        <div className="mt-14 pt-6 border-t border-background/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-background/50">
+          <span>© {new Date().getFullYear()} Griote Foundation</span>
+          <span className="flex items-center gap-1">
+            Afrique → Monde <ArrowUpRight className="h-3 w-3" />
+          </span>
         </div>
+
       </div>
     </footer>
-  );
-};
-
-export default Footer;
+  )
+}

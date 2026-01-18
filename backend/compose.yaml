@@ -1,0 +1,102 @@
+services:
+  # ====================== PostgreSQL ======================
+  postgres:
+    image: postgres:16-alpine
+    container_name: griote-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: griote               # même user que dans ton .env
+      POSTGRES_PASSWORD: griote           # même password que dans ton .env
+      POSTGRES_DB: griote
+    ports:
+      - "5432:5432"                       # tu peux enlever ça en prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U griote -d griote"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ====================== MinIO (S3 compatible) ======================
+  minio:
+    image: minio/minio:latest
+    container_name: griote-minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: minioadmin         # doit correspondre à MINIO_ACCESS_KEY dans ton .env
+      MINIO_ROOT_PASSWORD: minioadmin     # doit correspondre à MINIO_SECRET_KEY dans ton .env
+    ports:
+      - "9000:9000"                       # API S3
+      - "9001:9001"                       # Console web → http://localhost:9001
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # ====================== Ton app Node.js (monolithe) ======================
+  griote-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: griote-backend
+    restart: unless-stopped
+    env_file:
+      - .env                              # charge toutes tes variables .env
+    ports:
+      - "3000:3000"                       # API
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    volumes:
+      - .:/usr/src/app                            # hot-reload en dev (tu peux enlever en prod)
+      - /usr/src/app/node_modules                 # évite d'écraser node_modules
+
+  # ====================== Prometheus ======================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: griote-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - griote-backend
+
+  # ====================== Grafana ======================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: griote-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+
+# ====================== VOLUMES ======================
+volumes:
+  postgres_data:
+    name: griote_postgres_data
+  minio_data:
+    name: griote_minio_data
+  grafana_data:
+    name: griote_grafana_data
+
+# ====================== NETWORK (optionnel mais propre) ======================
+networks:
+  default:
+    name: griote_network

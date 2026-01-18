@@ -1,6 +1,14 @@
-import { authService, User } from './auth.service';
+// src/services/admin.service.ts
+import api from '../lib/axios';
+import { User } from './auth.service';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+export interface AdminFilters {
+  page?: number;
+  limit?: number;
+  role?: 'USER' | 'ADMIN';
+  email?: string;
+  name?: string;
+}
 
 export interface UsersListResponse {
   users: User[];
@@ -12,151 +20,143 @@ export interface UsersListResponse {
 export interface PlatformStats {
   totalUsers: number;
   verifiedUsers: number;
-  recentUsers: number;
-  usersByRole: Array<{ role: string; count: number }>;
+  totalDepots: number;
+  totalDocuments: number;
 }
 
-export interface AdminFilters {
-  page?: number;
-  limit?: number;
-  role?: 'USER' | 'ADMIN';
-  email?: string;
-  name?: string;
+export interface Category {
+  category_id: string;
+  name: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
 }
 
-class AdminService {
-  async getAllUsers(filters: AdminFilters = {}): Promise<UsersListResponse> {
-    const params = new URLSearchParams();
-    if (filters.page) params.append('page', filters.page.toString());
-    if (filters.limit) params.append('limit', filters.limit.toString());
-    if (filters.role) params.append('role', filters.role);
-    if (filters.email) params.append('email', filters.email);
-    if (filters.name) params.append('name', filters.name);
-
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/users?${params.toString()}`,
-      { method: 'GET' }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch users');
-    }
-
-    return await response.json();
-  }
-
-  async getUserById(userId: number): Promise<User> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/users/${userId}`,
-      { method: 'GET' }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch user');
-    }
-
-    return await response.json();
-  }
-
-  async updateUser(userId: number, data: Partial<User>): Promise<User> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/users/${userId}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to update user');
-    }
-
-    return await response.json();
-  }
-
-  async updateUserRole(userId: number, role: 'USER' | 'ADMIN'): Promise<User> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/users/${userId}/role`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ role }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to update user role');
-    }
-
-    return await response.json();
-  }
-
-  async resetUserPassword(userId: number, newPassword: string): Promise<void> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/users/${userId}/reset-password`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ newPassword }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to reset password');
-    }
-  }
-
-  async deleteUser(userId: number): Promise<void> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/users/${userId}`,
-      { method: 'DELETE' }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to delete user');
-    }
-  }
-
-  async getPlatformStats(): Promise<PlatformStats> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/stats`,
-      { method: 'GET' }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch stats');
-    }
-
-    return await response.json();
-  }
-
-  async createAdmin(adminData: {
-    email: string;
-    password: string;
-    first_name: string;
-    last_name: string;
-  }): Promise<User> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/admin/users`,
-      {
-        method: 'POST',
-        body: JSON.stringify(adminData),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to create admin');
-    }
-
-    return await response.json();
-  }
+export interface Tag {
+  tag_id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export const adminService = new AdminService();
-export default adminService;
+export interface Depot {
+  depot_id: string;
+  owner_id: string;
+  title: string;
+  description?: string;
+  category_id?: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  category?: Category;
+  documents?: any[];
+  tags?: Tag[];
+}
+
+// USERS
+export async function getAllUsers(filters: AdminFilters = {}): Promise<UsersListResponse> {
+  const params = new URLSearchParams();
+  if (filters.page) params.append('page', filters.page.toString());
+  if (filters.limit) params.append('limit', filters.limit.toString());
+  if (filters.role) params.append('role', filters.role);
+  if (filters.email) params.append('email', filters.email);
+  if (filters.name) params.append('name', filters.name);
+
+  const res = await api.get<UsersListResponse>(`/users/admin/users?${params.toString()}`);
+  return res.data;
+}
+
+export async function getUserById(userId: string): Promise<User> {
+  const res = await api.get<User>(`/users/admin/users/${userId}`);
+  return res.data;
+}
+
+export async function updateUser(userId: string, data: Partial<User>): Promise<User> {
+  const res = await api.put<User>(`/users/admin/users/${userId}`, data);
+  return res.data;
+}
+
+export async function updateUserRole(userId: string, role: 'USER' | 'ADMIN'): Promise<User> {
+  const res = await api.patch<User>(`/users/admin/users/${userId}/role`, { role });
+  return res.data;
+}
+
+export async function deleteUser(userId: string): Promise<void> {
+  await api.delete(`/users/admin/users/${userId}`);
+}
+
+export async function createUser(data: { email: string; password: string; first_name: string; last_name: string }): Promise<User> {
+  const res = await api.post<User>('/users/admin/users', data);
+  return res.data;
+}
+
+// STATS
+export async function getTotalUsers(): Promise<{ totalUsers: number }> {
+  const res = await api.get<{ totalUsers: number }>('/users/stats/total-users');
+  return res.data;
+}
+
+export async function getVerifiedUsers(): Promise<{ verifiedUsers: number }> {
+  const res = await api.get<{ verifiedUsers: number }>('/users/stats/verified-users');
+  return res.data;
+}
+
+export async function getTotalDepots(): Promise<{ totalDepots: number }> {
+  const res = await api.get<{ totalDepots: number }>('/depot/stats/total-depots');
+  return res.data;
+}
+
+export async function getTotalDocuments(): Promise<{ totalDocuments: number }> {
+  const res = await api.get<{ totalDocuments: number }>('/depot/stats/total-documents');
+  return res.data;
+}
+
+// CATEGORIES
+export async function getCategories(): Promise<Category[]> {
+  const res = await api.get<Category[]>('/categories');
+  return res.data;
+}
+
+export async function createCategory(data: { name: string; description?: string }): Promise<Category> {
+  const res = await api.post<Category>('/categories', data);
+  return res.data;
+}
+
+export async function updateCategory(categoryId: string, data: Partial<Category>): Promise<Category> {
+  const res = await api.patch<Category>(`/categories/${categoryId}`, data);
+  return res.data;
+}
+
+export async function deleteCategory(categoryId: string): Promise<void> {
+  await api.delete(`/categories/${categoryId}`);
+}
+
+// TAGS
+export async function getTags(): Promise<Tag[]> {
+  const res = await api.get<Tag[]>('/tags');
+  return res.data;
+}
+
+export async function createTag(data: { name: string }): Promise<Tag> {
+  const res = await api.post<Tag>('/tags', data);
+  return res.data;
+}
+
+export async function updateTag(tagId: string, data: Partial<Tag>): Promise<Tag> {
+  const res = await api.patch<Tag>(`/tags/${tagId}`, data);
+  return res.data;
+}
+
+export async function deleteTag(tagId: string): Promise<void> {
+  await api.delete(`/tags/${tagId}`);
+}
+
+// DEPOTS
+export async function getDepots(): Promise<Depot[]> {
+  const res = await api.get<Depot[]>('/depot');
+  return res.data;
+}
+
+export async function deleteDepot(depotId: string): Promise<void> {
+  await api.delete(`/depot/${depotId}`);
+}

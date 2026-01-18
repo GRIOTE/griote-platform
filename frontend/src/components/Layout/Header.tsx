@@ -1,175 +1,202 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Search, Menu, X, BookOpen, Users, Megaphone, User, LogOut } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import GrioteLogo from '@/assets/griote.svg';
+// src/components/Layout/Header.tsx
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, LogOut, Home, Search, Megaphone, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/auth/useAuth";
 
-interface HeaderProps {
-  isAuthenticated?: boolean;
-  onLogout?: () => void;
-}
+import GrioteLogo from "@/assets/griote.svg";
 
-const Header = ({ isAuthenticated = false, onLogout }: HeaderProps) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const location = useLocation();
+const getNavItems = (isAuthenticated: boolean) => {
+  const baseItems = [
+    { name: "Explorer", href: "/depots", icon: Search },
+    { name: "Annonces", href: "/annonces", icon: Megaphone },
+    { name: "À propos", href: "/a-propos", icon: Info },
+  ];
 
-  const isActive = (path: string) => location.pathname === path;
+  if (!isAuthenticated) {
+    return [{ name: "Accueil", href: "/", icon: Home }, ...baseItems];
+  }
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/recherche?q=${encodeURIComponent(searchQuery.trim())}`;
-    }
+  return baseItems;
+};
+
+export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+  const { isAuthenticated, logout, isLoading, user } = useAuth();
+
+  const navItems = getNavItems(isAuthenticated);
+
+  const handleLogout = async () => {
+    await logout(); // logout du contexte, met à jour state global
+    setMobileMenuOpen(false); // ferme le menu mobile si ouvert
   };
 
-  const navigationItems = isAuthenticated
-    ? [
-        { label: 'Mes Dépôts', path: '/mes-depots', icon: BookOpen },
-        { label: 'Annonces', path: '/annonces', icon: Megaphone },
-        { label: 'Découvrir', path: '/recherche', icon: Search },
-        { label: 'Bourses', path: '/bourses', icon: Users },
-        { label: 'Mon Compte', path: '/mon-compte', icon: User },
-      ]
-    : [
-        { label: 'Découvrir', path: '/recherche', icon: Search },
-        { label: 'Annonces', path: '/annonces', icon: Megaphone },
-        { label: 'Bourses', path: '/bourses', icon: Users },
-        { label: 'À propos', path: '/a-propos', icon: Users },
-      ];
-
   return (
-    <header className="bg-griote-white border-b border-griote-gray-100 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 transition-transform hover:scale-105">
-            <img src={GrioteLogo} alt="Griote Logo" className="w-10 h-10" />
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold text-griote-blue leading-none">Griote</span>
-              <span className="text-[10px] font-medium text-griote-gray-600 leading-tight">foundation</span>
+          <Link to="/" className="flex items-center space-x-3">
+            <img src={GrioteLogo} alt="Griote Foundation" className="h-10 w-auto" />
+            <div className="flex flex-col leading-none">
+              <span className="text-xl font-bold text-primary">Griote</span>
+              <span className="text-[10px] uppercase tracking-widest text-primary/70 -mt-0.5">
+                Project-Africa
+              </span>
             </div>
           </Link>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-xl mx-8 hidden md:block">
-            <form onSubmit={handleSearch} className="relative">
-              <Input
-                type="text"
-                placeholder="Rechercher un projet..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border-2 border-griote-gray-100 rounded-md focus:outline-none focus:border-griote-blue text-griote-gray-800 bg-griote-gray-100"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-griote-blue" />
-            </form>
-          </div>
+          {/* Navigation desktop */}
+          <nav className="hidden lg:flex flex-1 justify-center">
+            <div className="flex gap-8">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/" && pathname.startsWith(item.href));
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition",
+                      isActive
+                        ? "text-primary bg-accent"
+                        : "text-black hover:bg-accent/70"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-4">
-            {navigationItems.map((item) => {
+          {/* Actions droite */}
+          <div className="flex items-center gap-3">
+
+            {/* Desktop */}
+            <div className="hidden lg:flex gap-3">
+              {isLoading ? (
+                <div className="px-4 py-2 text-sm text-muted-foreground">
+                  Chargement...
+                </div>
+              ) : !isAuthenticated ? (
+                <>
+                  <Link to="/connexion">
+                    <button className="px-5 py-2 text-sm border rounded-lg">
+                      Se connecter
+                    </button>
+                  </Link>
+                  <Link to="/inscription">
+                    <button className="px-6 py-2 text-sm bg-accent rounded-lg">
+                      S'inscrire
+                    </button>
+                  </Link>
+                </>
+              ) : (
+                <div className="flex gap-3">
+                  <Link to="/mon-compte">
+                    <button className="px-4 py-2 text-sm border rounded-lg hover:bg-accent/50 transition-colors">
+                      Mon compte
+                    </button>
+                  </Link>
+                  {user?.role === "ADMIN" && (
+                    <Link to="/admin/stats">
+                      <button className="px-4 py-2 text-sm bg-accent rounded-lg hover:bg-accent/80 transition-colors">
+                        Panneau d'administration
+                      </button>
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 text-sm border rounded-lg hover:bg-red-50 hover:border-red-200 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Déconnexion
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Burger mobile */}
+            <button
+              onClick={() => setMobileMenuOpen(v => !v)}
+              className="lg:hidden p-2 rounded-lg"
+            >
+              {mobileMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t">
+          <div className="px-6 py-5 space-y-2">
+            {navItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-200 ${
-                    isActive(item.path)
-                      ? 'bg-griote-blue/10 text-griote-blue font-semibold'
-                      : 'text-griote-gray-800 hover:bg-griote-gray-100 hover:text-griote-blue'
-                  }`}
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg"
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-sm">{item.label}</span>
+                  <Icon className="h-5 w-5" />
+                  {item.name}
                 </Link>
               );
             })}
 
-            {!isAuthenticated ? (
-              <div className="flex items-center space-x-2 ml-4">
-                <Link to="/connexion">
-                  <button className="px-4 py-2 border-2 border-griote-blue text-griote-blue rounded-md font-semibold hover:bg-griote-blue hover:text-griote-white transition-colors duration-200">
-                    Se connecter
-                  </button>
-                </Link>
-                <Link to="/inscription">
-                  <button className="px-4 py-2 bg-griote-blue text-griote-white rounded-md font-semibold hover:bg-griote-accent hover:text-griote-blue transition-colors duration-200">
-                    S'inscrire
-                  </button>
-                </Link>
-              </div>
-            ) : (
-              <button
-                onClick={onLogout}
-                className="flex items-center space-x-2 px-4 py-2 border-2 border-griote-blue text-griote-blue rounded-md font-semibold hover:bg-griote-blue hover:text-griote-white transition-colors duration-200 ml-4"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Se déconnecter</span>
-              </button>
-            )}
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button className="lg:hidden text-griote-blue p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-griote-gray-100 py-4 space-y-2 animate-slide-down">
-            <nav className="flex flex-col">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`flex items-center space-x-2 px-4 py-3 rounded-md transition-colors duration-200 ${
-                      isActive(item.path)
-                        ? 'bg-griote-blue/10 text-griote-blue font-semibold'
-                        : 'text-griote-gray-800 hover:bg-griote-gray-100 hover:text-griote-blue'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-
-              {!isAuthenticated ? (
-                <div className="pt-4 border-t border-griote-gray-100 space-y-2">
-                  <Link
-                    to="/connexion"
-                    className="block w-full text-center py-2 border-2 border-griote-blue text-griote-blue rounded-md hover:bg-griote-blue hover:text-griote-white transition-colors duration-200"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Se connecter
-                  </Link>
-                  <Link
-                    to="/inscription"
-                    className="block w-full text-center py-2 bg-griote-blue text-griote-white rounded-md hover:bg-griote-accent hover:text-griote-blue transition-colors duration-200"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    S'inscrire
-                  </Link>
+            <div className="pt-4 border-t">
+              {isLoading ? (
+                <div className="w-full py-3 text-center text-muted-foreground">
+                  Chargement...
                 </div>
+              ) : !isAuthenticated ? (
+                <>
+                  <Link to="/connexion">
+                    <button className="w-full py-3 border rounded-lg">
+                      Se connecter
+                    </button>
+                  </Link>
+                  <Link to="/inscription">
+                    <button className="w-full py-3 bg-accent rounded-lg">
+                      S'inscrire
+                    </button>
+                  </Link>
+                </>
               ) : (
-                <button
-                  onClick={onLogout}
-                  className="flex items-center space-x-2 w-full px-4 py-2 mt-2 border-t border-griote-gray-100 text-griote-blue hover:bg-griote-gray-100 rounded-md transition-colors duration-200"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span>Se déconnecter</span>
-                </button>
+                <div className="space-y-2">
+                  <Link to="/mon-compte">
+                    <button className="w-full py-3 border rounded-lg">
+                      Mon compte
+                    </button>
+                  </Link>
+                  {user?.role === "ADMIN" && (
+                    <Link to="/admin/stats">
+                      <button className="w-full py-3 bg-accent rounded-lg">
+                        Panneau d'administration
+                      </button>
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full py-3 border rounded-lg"
+                  >
+                    Se déconnecter
+                  </button>
+                </div>
               )}
-            </nav>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </header>
   );
-};
-
-export default Header;
+}

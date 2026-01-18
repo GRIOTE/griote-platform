@@ -1,64 +1,35 @@
-import { authService, User } from './auth.service';
+// src/services/mon-compte.service.ts
+import api from '../lib/axios';
+import { User } from './auth.service';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-
-export interface UpdateProfileData {
-  firstName?: string;
-  lastName?: string;
-  bio?: string;
-  linkedin_url?: string;
-  github_url?: string;
-  website_url?: string;
-  date_of_birth?: string;
+// Récupérer le profil de l'utilisateur connecté
+export async function getProfile(): Promise<User> {
+  const res = await api.get<User>('/users/me');
+  return res.data;
 }
 
-class UserService {
-  async getProfile(): Promise<User> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/users/me`,
-      { method: 'GET' }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch profile');
-    }
-
-    return await response.json();
-  }
-
-  async updateProfile(data: UpdateProfileData): Promise<User> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/users/me`,
-      {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to update profile');
-    }
-
-    return await response.json();
-  }
-
-  async changePassword(oldPassword: string, newPassword: string): Promise<void> {
-    const response = await authService.makeAuthenticatedRequest(
-      `${API_BASE_URL}/auth/change-password`,
-      {
-        method: 'POST',
-        body: JSON.stringify({ oldPassword, newPassword }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to change password');
-    }
-  }
+// Mettre à jour le profil
+export async function updateProfile(data: Partial<User>): Promise<User> {
+  const res = await api.put<User>('/users/me', data);
+  return res.data;
 }
 
-export const userService = new UserService();
-export default userService;
+// Changer le mot de passe
+export async function changePassword(data: { oldPassword: string; newPassword: string }): Promise<any> {
+  const res = await api.put<User>('/users/change-password', data);
+  return res.data;
+}
+
+// Uploader une photo de profil
+export async function setProfilePicture(formData: FormData): Promise<any> {
+  const res = await api.post('/users/me/profile-picture', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return res.data;
+}
+
+// Supprimer la photo de profil
+export async function removeProfilePicture(): Promise<any> {
+  const res = await api.delete('/users/me/profile-picture');
+  return res.data;
+}

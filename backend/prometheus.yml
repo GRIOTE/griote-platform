@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'griote-backend'
+    static_configs:
+      - targets: ['griote-backend:3000']
