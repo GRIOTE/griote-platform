@@ -1,159 +1,143 @@
-import { useState } from "react"
-import {
-  getCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from "../../../services/admin.service"
+import { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Plus, Trash2, Edit2 } from "lucide-react";
 
-import type { Category, CategoryFormData } from "./types"
+import { getCategories, createCategory, updateCategory, deleteCategory } from "../../../services/category.service";
+import type { Category } from "../../../types/category";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../../components/ui/card"
-import { Button } from "../../../components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "../../../components/ui/dialog"
-
-import { Plus, FolderOpen } from "lucide-react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
-
-import CategoriesTable from "./CategoriesTable"
-import CategoryForm from "./CategoryForm"
+import { Card, CardContent, CardTitle } from "../../../components/ui/card";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "../../../components/ui/dialog";
+import CategoryForm from "./CategoryForm";
 
 export default function AdminCategories() {
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   // ---------- QUERY ----------
-  const { data: categories = [], isLoading } = useQuery<Category[]>({
-    queryKey: ['categories'],
+  const { data: categories = [] } = useQuery<Category[]>({
+    queryKey: ["categories"],
     queryFn: getCategories,
-  })
+  });
 
   // ---------- MUTATIONS ----------
   const createMutation = useMutation({
-    mutationFn: (data: CategoryFormData) => createCategory(data),
+    mutationFn: (name: string) => createCategory(name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] })
-      toast.success('Catégorie créée')
-      setIsCreateOpen(false)
+      queryClient.invalidateQueries({queryKey: ["categories"]});
+      toast.success("Catégorie créée");
+      setIsCreateOpen(false);
     },
-    onError: () => toast.error('Erreur lors de la création'),
-  })
+    onError: () => toast.error("Erreur lors de la création"),
+  });
 
   const updateMutation = useMutation({
-    mutationFn: (payload: { id: string; data: CategoryFormData }) =>
-      updateCategory(payload.id, payload.data),
+    mutationFn: (payload: { id: number; name: string }) =>
+      updateCategory(payload.id, payload.name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] })
-      toast.success('Catégorie mise à jour')
-      setIsEditOpen(false)
-      setSelectedCategory(null)
+      queryClient.invalidateQueries({queryKey: ["categories"]});
+      toast.success("Catégorie mise à jour");
+      setIsEditOpen(false);
+      setSelectedCategory(null);
     },
-    onError: () => toast.error('Erreur lors de la mise à jour'),
-  })
+    onError: () => toast.error("Erreur lors de la mise à jour"),
+  });
 
   const deleteMutation = useMutation({
-    mutationFn: (categoryId: string) => deleteCategory(categoryId),
+    mutationFn: (categoryId: number) => deleteCategory(categoryId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] })
-      toast.success('Catégorie supprimée')
+      queryClient.invalidateQueries({queryKey: ["categories"]});
+      toast.success("Catégorie supprimée");
     },
-    onError: () => toast.error('Erreur lors de la suppression'),
-  })
+    onError: () => toast.error("Erreur lors de la suppression"),
+  });
 
   // ---------- HANDLERS ----------
   const handleEdit = (category: Category) => {
-    setSelectedCategory(category)
-    setIsEditOpen(true)
-  }
+    setSelectedCategory(category);
+    setIsEditOpen(true);
+  };
 
-  const handleDelete = (categoryId: string) => {
-    deleteMutation.mutate(categoryId)
-  }
+  const handleDelete = (categoryId: number) => {
+    if (confirm("Supprimer cette catégorie ?")) {
+      deleteMutation.mutate(categoryId);
+    }
+  };
+
+  const filteredCategories = useMemo(() => {
+    return categories.filter(category =>
+      category.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [categories, searchTerm]);
 
   // ---------- UI ----------
   return (
     <div className="space-y-6">
-      {/* Statistiques */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Catégories</CardTitle>
-            <FolderOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{categories.length}</div>
-          </CardContent>
-        </Card>
+      {/* Top bar: création + recherche */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <Input
+          placeholder="Rechercher une catégorie..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="md:max-w-xs"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Catégories Actives</CardTitle>
-            <FolderOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{categories.length}</div>
-          </CardContent>
-        </Card>
+        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Nouvelle catégorie
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Créer une catégorie</DialogTitle>
+              <DialogDescription />
+            </DialogHeader>
+            <CategoryForm
+              loading={createMutation.isPending}
+              onSubmit={(name) => createMutation.mutate(name)}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Gestion des catégories */}
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between">
-            <div>
-              <CardTitle>Gestion des Catégories</CardTitle>
-              <CardDescription>Organisation du contenu</CardDescription>
-            </div>
+      {/* Categories grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {filteredCategories.map((category) => (
+          <Card key={category.category_id} className="flex flex-col justify-between">
+            <CardContent className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium">{category.name}</CardTitle>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEdit(category)}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleDelete(category.category_id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nouvelle catégorie
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Créer une catégorie</DialogTitle>
-                  <DialogDescription />
-                </DialogHeader>
-                <CategoryForm
-                  loading={createMutation.isPending}
-                  onSubmit={createMutation.mutate}
-                />
-              </DialogContent>
-            </Dialog>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <CategoriesTable
-            data={categories}
-            isLoading={isLoading}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Dialog d'édition */}
+      {/* Dialog édition */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent>
           <DialogHeader>
@@ -162,21 +146,15 @@ export default function AdminCategories() {
           </DialogHeader>
           {selectedCategory && (
             <CategoryForm
-              initialValues={{
-                name: selectedCategory.name,
-                description: selectedCategory.description,
-              }}
+              initialName={selectedCategory.name}
               loading={updateMutation.isPending}
-              onSubmit={(data) =>
-                updateMutation.mutate({
-                  id: selectedCategory.category_id,
-                  data,
-                })
+              onSubmit={(name) =>
+                updateMutation.mutate({ id: selectedCategory.category_id, name })
               }
             />
           )}
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

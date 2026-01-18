@@ -3,25 +3,33 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
-  withCredentials: true, // Indispensable pour envoyer/recevoir le cookie httpOnly
+  withCredentials: true,
 });
 
-// Ajoute le token à chaque requête
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
-  if (token) {
+
+  if (
+    token &&
+    config.url &&
+    !config.url.includes("/auth/refresh")
+  ) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
-// Gère le rafraîchissement automatique du token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh")
+    ) {
       originalRequest._retry = true;
 
       try {
@@ -30,20 +38,16 @@ api.interceptors.response.use(
 
         localStorage.setItem("accessToken", newAccessToken);
 
-        // Si le backend renvoie aussi l'user mis à jour (recommandé)
         if (res.data.user) {
           localStorage.setItem("user", JSON.stringify(res.data.user));
         }
 
-        // Réessayer la requête originale
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
-      } catch (refreshError) {
-        // Refresh échoué → déconnexion
+      } catch {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("user");
         window.location.href = "/connexion";
-        return Promise.reject(refreshError);
       }
     }
 
