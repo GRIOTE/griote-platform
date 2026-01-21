@@ -9,11 +9,12 @@ env:
   REGISTRY: docker.io
   BACKEND_IMAGE: brandonkamga237/backend-griote
   FRONTEND_IMAGE: brandonkamga237/frontend-griote
-  DEPLOY_PATH: /opt/griote
+  DEPLOY_PATH: /root/griote
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,8 +32,8 @@ jobs:
           context: ./backend
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:latest
-            ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+            ${{ env.BACKEND_IMAGE }}:latest
+            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
@@ -40,8 +41,8 @@ jobs:
           context: ./frontend
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
-            ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+            ${{ env.FRONTEND_IMAGE }}:latest
+            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
 
       - name: Copy docker-compose.yml to server
         uses: appleboy/scp-action@v0.1.7
@@ -51,7 +52,6 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: docker-compose.yml
           target: ${{ env.DEPLOY_PATH }}
-          strip_components: 0
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
@@ -60,10 +60,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /opt/griote
-            docker network inspect griote_network > /dev/null 2>&1 || docker network create griote_network
-            docker compose --profile prod pull backend-griote frontend-griote
-            docker compose --profile prod up -d
-            docker image prune -f
-            echo "✅ Deployment completed!"
-            docker compose ps
+            cd /root/griote
+            docker compose --profile prod pull
+            docker compose --profile prod up -d --remove-orphans
