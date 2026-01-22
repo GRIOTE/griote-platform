@@ -9,6 +9,11 @@ export interface User {
   role: 'USER' | 'ADMIN';
   is_email_verified: boolean;
   profile_picture?: string;
+  bio?: string;
+  date_of_birth?: string;
+  linkedin_url?: string;
+  github_url?: string;
+  website_url?: string;
 }
 
 export interface LoginResponse {

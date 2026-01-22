@@ -5,7 +5,7 @@ import { Label } from "../../../components/ui/label";
 import ReactQuill from "react-quill";
 import { quillModules } from "../../../utils/quill";
 import "react-quill/dist/quill.snow.css";
-import { AnnouncementFormData } from "./types";
+import type { AnnouncementFormData } from "./types";
 import { X, Image as ImageIcon } from "lucide-react";
 
 interface Props {

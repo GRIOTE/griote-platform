@@ -4,7 +4,8 @@ import { ArrowLeft, Calendar, User } from 'lucide-react';
 import Header from '@/components/Layout/Header';
 import Footer from '@/components/Layout/Footer';
 import { Button } from '@/components/ui/button';
-import { getAnnouncementById, Announcement, AnnouncementImage } from '@/services/announcement.service';
+import { getAnnouncementById } from '@/services/announcement.service';
+import type { Announcement, AnnouncementImage } from '@/types/announcement';
 
 const AnnouncementDetail = () => {
   const { id } = useParams<{ id: string }>();

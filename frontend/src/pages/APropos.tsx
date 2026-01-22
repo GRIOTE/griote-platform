@@ -12,7 +12,7 @@ const APropos = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header isAuthenticated={isAuthenticated} onLogout={logout} />
+      <Header />
 
       <main>
         {/* Hero Section – Impactante avec motif culturel discret */}

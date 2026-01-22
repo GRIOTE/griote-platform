@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import grioteLogo from '@/assets/griote.svg';
 import { toast } from 'sonner';
+import { resendVerificationEmail } from '@/services/auth.service';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
@@ -59,6 +60,20 @@ const VerifyEmail = () => {
 
     verifyEmail();
   }, [searchParams, navigate]);
+
+  const handleResendVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsResending(true);
+    try {
+      await resendVerificationEmail(resendEmail);
+      toast.success('Email de vérification renvoyé avec succès !');
+      setResendEmail('');
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de l\'envoi de l\'email');
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-griote-blue to-griote-blue-dark flex items-center justify-center p-4">
@@ -144,7 +159,7 @@ const VerifyEmail = () => {
                         type="email"
                         placeholder="votre@email.com"
                         value={resendEmail}
-                        onChange={(e: React.FormEvent<HTMLFormElement>) => setResendEmail(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setResendEmail(e.target.value)}
                         className="border-griote-accent focus:border-griote-blue"
                         required
                       />

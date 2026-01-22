@@ -28,8 +28,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getDepots,
   deleteDepot,
-  Depot
 } from '@/services/admin.service'
+import type { Depot } from '@/services/admin.service'
 import { BarChart3, Eye, Trash2, Loader2, FileText } from "lucide-react"
 import { toast } from "sonner"
 import { UnderConstruction } from "@/components/UnderConstruction"

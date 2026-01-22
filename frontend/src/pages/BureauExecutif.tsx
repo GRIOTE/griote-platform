@@ -59,7 +59,7 @@ const BureauExecutif = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header isAuthenticated={isAuthenticated} onLogout={logout} />
+      <Header />
 
       {/* HERO */}
       <section className="relative bg-gradient-to-br from-primary/80 to-accent/70 py-28 text-left overflow-hidden">

@@ -1,7 +1,7 @@
 // utils/quill.ts
-import type { QuillOptionsStatic } from "quill"
+import type { QuillOptions } from "quill"
 
-export const quillModules: QuillOptionsStatic["modules"] = {
+export const quillModules: QuillOptions["modules"] = {
   toolbar: [
     [{ header: [1, 2, 3, false] }],
     ["bold", "italic", "underline"],

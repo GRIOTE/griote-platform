@@ -12,7 +12,7 @@ const CestQuoiGriote = () => {
 
   return (
     <div className="min-h-screen bg-griote-white">
-      <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+      <Header />
 
       <main>
         {/* Hero Section */}

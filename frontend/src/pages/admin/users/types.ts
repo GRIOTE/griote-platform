@@ -6,7 +6,7 @@ export type {
 } from '../../../services/admin.service'
 
 // Admin-specific user interface with additional fields from admin endpoint
-import { User as BaseUser } from '../../../services/auth.service'
+import type { User as BaseUser } from '../../../services/auth.service'
 
 export interface AdminUser extends BaseUser {
   email_verified: boolean

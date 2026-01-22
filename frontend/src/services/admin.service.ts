@@ -1,6 +1,6 @@
 // src/services/admin.service.ts
 import api from '../lib/axios';
-import { User } from './auth.service';
+import type { User } from './auth.service';
 
 export interface AdminFilters {
   page?: number;

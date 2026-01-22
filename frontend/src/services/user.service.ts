@@ -1,6 +1,6 @@
 // src/services/mon-compte.service.ts
 import api from '../lib/axios';
-import { User } from './auth.service';
+import type { User } from './auth.service';
 
 // Récupérer le profil de l'utilisateur connecté
 export async function getProfile(): Promise<User> {
