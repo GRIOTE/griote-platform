@@ -10,54 +10,39 @@ env:
   BACKEND_IMAGE: brandonkamga237/backend-griote
   FRONTEND_IMAGE: brandonkamga237/frontend-griote
   DEPLOY_PATH: /root/griote
+  COMPOSE_PROJECT_NAME: griote
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: brandonkamga237
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push backend image
-        uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v5
         with:
           context: ./backend
           push: true
-          tags: |
-            ${{ env.BACKEND_IMAGE }}:latest
+          tags: ${{ env.BACKEND_IMAGE }}:latest
 
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
-          tags: |
-            ${{ env.FRONTEND_IMAGE }}:latest
+          tags: ${{ env.FRONTEND_IMAGE }}:latest
 
-      - name: Copy docker-compose.yml to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: docker-compose.yml
-          target: ${{ env.DEPLOY_PATH }}
-
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /root/griote
-            docker compose pull
-            docker compose up -d --remove-orphans
+            cd ${{ env.DEPLOY_PATH }}
+            docker compose -p ${{ env.COMPOSE_PROJECT_NAME }} pull
+            docker compose -p ${{ env.COMPOSE_PROJECT_NAME }} up -d --remove-orphans
