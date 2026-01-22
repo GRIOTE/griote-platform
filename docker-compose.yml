@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   # ====================== PostgreSQL ======================
   postgres-griote:
@@ -27,9 +29,9 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
-    command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
@@ -45,7 +47,7 @@ services:
       - web
       - griote_internal
 
-  # ====================== Backend ======================
+  # ====================== Backend API ======================
   backend-griote:
     image: brandonkamga237/backend-griote:latest
     container_name: griote-backend
@@ -98,6 +100,8 @@ services:
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
       - "traefik.http.routers.prometheus.middlewares=prometheus-auth"
       - "traefik.http.middlewares.prometheus-auth.basicauth.users=${PROMETHEUS_BASIC_AUTH}"
+    depends_on:
+      - backend-griote
     networks:
       - web
       - griote_internal
@@ -121,6 +125,8 @@ services:
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.http.routers.grafana.middlewares=grafana-auth"
       - "traefik.http.middlewares.grafana-auth.basicauth.users=${GRAFANA_BASIC_AUTH}"
+    depends_on:
+      - prometheus-griote
     networks:
       - web
       - griote_internal
@@ -136,5 +142,6 @@ volumes:
 networks:
   web:
     external: true
+
   griote_internal:
     driver: bridge
