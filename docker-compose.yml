@@ -1,32 +1,4 @@
-
 services:
-  # ====================== Traefik (Reverse Proxy) ======================
-  traefik-griote:
-    image: traefik:v2.10
-    container_name: griote-traefik
-    command:
-      - "--api.insecure=false"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsencrypt.acme.email=admin@griote.org"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - letsencrypt:/letsencrypt
-    networks:
-      - griote_network
-    profiles:
-      - prod
-
   # ====================== PostgreSQL ======================
   postgres-griote:
     image: postgres:16-alpine
@@ -45,9 +17,9 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - griote_network
+      - griote_internal
 
-  # ====================== MinIO (S3 compatible) ======================
+  # ====================== MinIO ======================
   minio-griote:
     image: minio/minio:latest
     container_name: griote-minio
@@ -67,10 +39,11 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.minio.rule=Host(`minio.griote.org`)"
       - "traefik.http.routers.minio.entrypoints=websecure"
-      - "traefik.http.routers.minio.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.minio.tls.certresolver=le"
       - "traefik.http.services.minio.loadbalancer.server.port=9001"
     networks:
-      - griote_network
+      - web
+      - griote_internal
 
   # ====================== Backend ======================
   backend-griote:
@@ -86,14 +59,13 @@ services:
         condition: service_healthy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`api.griote.org`)"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.backend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.griote-api.rule=Host(`api.griote.org`)"
+      - "traefik.http.routers.griote-api.entrypoints=websecure"
+      - "traefik.http.routers.griote-api.tls.certresolver=le"
+      - "traefik.http.services.griote-api.loadbalancer.server.port=3000"
     networks:
-      - griote_network
-    profiles:
-      - prod
+      - web
+      - griote_internal
 
   # ====================== Frontend ======================
   frontend-griote:
@@ -104,14 +76,12 @@ services:
       - ./frontend/.env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`griote.org`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+      - "traefik.http.routers.griote.rule=Host(`griote.org`)"
+      - "traefik.http.routers.griote.entrypoints=websecure"
+      - "traefik.http.routers.griote.tls.certresolver=le"
+      - "traefik.http.services.griote.loadbalancer.server.port=80"
     networks:
-      - griote_network
-    profiles:
-      - prod
+      - web
 
   # ====================== Prometheus ======================
   prometheus-griote:
@@ -124,16 +94,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.prometheus.rule=Host(`prometheus.griote.org`)"
       - "traefik.http.routers.prometheus.entrypoints=websecure"
-      - "traefik.http.routers.prometheus.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.prometheus.tls.certresolver=le"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
       - "traefik.http.routers.prometheus.middlewares=prometheus-auth"
       - "traefik.http.middlewares.prometheus-auth.basicauth.users=${PROMETHEUS_BASIC_AUTH}"
-    depends_on:
-      - backend-griote
     networks:
-      - griote_network
-    profiles:
-      - prod
+      - web
+      - griote_internal
 
   # ====================== Grafana ======================
   grafana-griote:
@@ -150,16 +117,13 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.grafana.rule=Host(`grafana.griote.org`)"
       - "traefik.http.routers.grafana.entrypoints=websecure"
-      - "traefik.http.routers.grafana.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.grafana.tls.certresolver=le"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.http.routers.grafana.middlewares=grafana-auth"
       - "traefik.http.middlewares.grafana-auth.basicauth.users=${GRAFANA_BASIC_AUTH}"
-    depends_on:
-      - prometheus-griote
     networks:
-      - griote_network
-    profiles:
-      - prod
+      - web
+      - griote_internal
 
 volumes:
   postgres_data:
@@ -168,9 +132,9 @@ volumes:
     name: griote_minio_data
   grafana_data:
     name: griote_grafana_data
-  letsencrypt:
-    name: griote_letsencrypt
 
 networks:
-  griote_network:
+  web:
     external: true
+  griote_internal:
+    driver: bridge
