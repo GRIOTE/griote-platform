@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const CallToActionSection = () => {
   return (
-    <section className="relative py-20 lg:py-28 bg-gradient-to-br from-primary via-primary/90 to-primary/80 overflow-hidden">
+    <section className="relative py-20 lg:py-28 bg-primary-gradient overflow-hidden">
 
       {/* Texture africaine subtile (fond uniquement) */}
       <div className="absolute inset-0 opacity-[0.06]">
@@ -15,9 +15,6 @@ const CallToActionSection = () => {
           className="w-full h-full object-cover"
         />
       </div>
-
-      {/* Overlay de profondeur pour le contraste */}
-      <div className="absolute inset-0 bg-black/25" />
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
@@ -41,7 +38,7 @@ const CallToActionSection = () => {
             {/* CTA principal */}
             <Button
               size="lg"
-              className="text-lg px-10 py-6 font-semibold bg-white text-primary hover:bg-accent/90"
+              className="text-lg px-10 py-6 font-semibold bg-white text-primary hover:bg-[#]"
               asChild
             >
               <Link to="/inscription">
@@ -53,7 +50,7 @@ const CallToActionSection = () => {
             <Button
               size="lg"
               variant="outline"
-              className="text-lg px-10 py-6 font-semibold border-white/70 text-foreground hover:bg-white/10 hover:border-white"
+              className=" text-lg px-10 py-6 font-semibold text-foreground bg-accent"
               asChild
             >
               <Link to="/a-propos" className="inline-flex items-center gap-3">

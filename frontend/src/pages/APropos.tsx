@@ -16,7 +16,7 @@ const APropos = () => {
 
       <main>
         {/* Hero Section – Impactante avec motif culturel discret */}
-        <section className="relative bg-gradient-to-br from-primary to-blue-900 py-28 lg:py-40 overflow-hidden">
+        <section className="relative bg-primary-gradient py-28 lg:py-40 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <img
               src="https://img.freepik.com/free-vector/ethnic-seamless-pattern-background-black-white-aztec-design-vector_53876-154221.jpg"
@@ -24,29 +24,48 @@ const APropos = () => {
               className="w-full h-full object-cover"
             />
           </div>
+
           <div className="container mx-auto px-4 relative z-10 text-center max-w-5xl">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-accent mb-8">
-              Griote Project-Africa
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-accent mb-10">
+              Griote Africa
             </h1>
-            <p className="text-xl font-black lg:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Une initiative dédiée à la valorisation, l’archivage et la diffusion des savoirs africains.<br />
-              Nous construisons un écosystème académique et technologique souverain pour connecter les talents du continent et façonner l’avenir de l’innovation.
+
+            <p className="text-lg md:text-xl lg:text-2xl font-semibold text-white/90 mb-20 max-w-3xl mx-auto">
+              La mémoire, le savoir et l’innovation africaine réunis dans un seul écosystème.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link to="/inscription">
-                <Button size="lg" className="px-12 py-8 text-2xl font-semibold bg-white text-primary hover:bg-accent/90">
+                <Button
+                  size="lg"
+                  className="px-12 py-8 text-xl font-semibold bg-white text-primary hover:bg-accent/90"
+                >
                   Rejoindre la communauté
                 </Button>
               </Link>
+
               <Link to="/depots">
-                <Button variant="outline" size="lg" className="px-12 py-8 text-2xl font-bold bg-transparent border-white text-white hover:bg-white/10 transition-all inline-flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-12 py-8 text-xl font-semibold text-foreground bg-accent inline-flex items-center gap-3"
+                >
                   Explorer les dépôts
-                  <ArrowRight className="w-6 h-6 ml-3" />
+                  <ArrowRight className="w-6 h-6" />
                 </Button>
               </Link>
             </div>
           </div>
         </section>
+
+
+
+
+
+
+
+
+
 
         {/* Section unique enrichie : Mission, Vision, Valeurs & Équipe – Plus qualitative, visuelle et fluide */}
         <section className="py-24 lg:py-32 bg-background">
@@ -66,9 +85,9 @@ const APropos = () => {
               {/* Colonne texte + piliers */}
               <div className="space-y-12">
                 <div className="flex items-start gap-6">
-                  <Archive className="w-14 h-14 text-primary flex-shrink-0" />
+                  <Archive className="w-14 h-14 text-blue-500 flex-shrink-0" />
                   <div>
-                    <h3 className="text-2xl font-bold mb-3">Préservation & Diffusion</h3>
+                    <h3 className="text-2xl text-blue-500 font-bold mb-3">Préservation & Diffusion</h3>
                     <p className="text-foreground/80 text-lg">
                       Archiver les travaux académiques africains et les rendre accessibles mondialement, pour que chaque thèse, mémoire ou recherche compte et soit citée.
                     </p>
@@ -76,9 +95,9 @@ const APropos = () => {
                 </div>
 
                 <div className="flex items-start gap-6">
-                  <Lightbulb className="w-14 h-14 text-primary flex-shrink-0" />
+                  <Lightbulb className="w-14 h-14 text-blue-500 shrink-0" />
                   <div>
-                    <h3 className="text-2xl font-bold mb-3">Innovation & Souveraineté</h3>
+                    <h3 className="text-2xl text-blue-500 font-bold mb-3">Innovation & Souveraineté</h3>
                     <p className="text-foreground/80 text-lg">
                       Développer Griote AI et des projets open source entraînés sur nos savoirs et langues, pour une technologie véritablement adaptée à nos réalités.
                     </p>
@@ -86,9 +105,9 @@ const APropos = () => {
                 </div>
 
                 <div className="flex items-start gap-6">
-                  <Target className="w-14 h-14 text-primary flex-shrink-0" />
+                  <Target className="w-14 h-14 text-blue-500 shrink-0" />
                   <div>
-                    <h3 className="text-2xl font-bold mb-3">Excellence & Collaboration</h3>
+                    <h3 className="text-2xl text-blue-500 font-bold mb-3">Excellence & Collaboration</h3>
                     <p className="text-foreground/80 text-lg">
                       Promouvoir l’excellence académique africaine et favoriser les partenariats panafricains et internationaux.
                     </p>
@@ -106,57 +125,50 @@ const APropos = () => {
             </div>
 
             {/* Équipe – Intégrée dans la même section pour fluidité */}
-            <div className="mt-24">
-              <h2 className="text-4xl lg:text-5xl font-bold text-center mb-12">
-                Portée par une Équipe Engagée
+            <div className="mt-24 text-center">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-8 text-foreground">
+                Une Équipe Engagée
               </h2>
-              <div className="max-w-5xl mx-auto">
+              <div className="max-w-4xl mx-auto">
                 <Link to="/a-propos/bureau-executif">
                   <Card className="relative overflow-hidden rounded-3xl border border-border group hover:shadow-2xl transition-all">
 
-                    {/* Background image */}
                     <img
                       src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1600&auto=format&fit=crop"
                       alt="Équipe africaine en réunion"
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
 
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/80 to-background/40" />
+                    <div className="absolute inset-0 bg-black/60" />
 
-                    {/* Content */}
-                    <div className="relative z-10 p-12 lg:p-16 text-center flex flex-col items-center">
-
-                      {/* Icon */}
-                      <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center mb-8 shadow-lg">
-                        <Users className="w-12 h-12 text-white" />
+                    <div className="relative z-10 p-12 lg:p-16 flex flex-col items-center text-center">
+                      <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mb-6 shadow-lg">
+                        <Users className="w-10 h-10 text-white" />
                       </div>
 
-                      <h3 className="text-4xl font-extrabold mb-4">
+                      <h3 className="text-3xl font-bold text-white mb-4">
                         Bureau Exécutif
                       </h3>
 
-                      <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                        L’organe stratégique qui définit la vision, pilote les décisions
-                        structurantes et garantit l’excellence opérationnelle du projet.
+                      <p className="text-white/90 text-lg max-w-xl mb-6">
+                        Pilote la vision et les décisions clés du projet.
                       </p>
 
-                      <span className="inline-flex items-center gap-2 text-primary font-semibold text-lg group-hover:translate-x-2 transition-transform">
-                        Découvrir l’équipe dirigeante
+                      <span className="inline-flex items-center gap-2 text-blue-400 font-semibold text-lg group-hover:translate-x-2 group-hover:text-blue-300 transition-transform">
+                        Découvrir l’équipe
                         <ArrowRight className="w-5 h-5" />
                       </span>
                     </div>
                   </Card>
                 </Link>
               </div>
-
             </div>
 
           </div>
         </section>
 
         {/* Call to Action final – Puissant et centré */}
-        <section className="relative bg-gradient-to-br from-primary to-blue-900 py-28 lg:py-40 overflow-hidden">
+        <section className="relative bg-primary-gradient py-28 lg:py-40 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <img
               src="https://img.freepik.com/free-vector/ethnic-seamless-pattern-background-black-white-aztec-design-vector_53876-154221.jpg"
@@ -171,9 +183,8 @@ const APropos = () => {
             </h2>
 
             <p className="text-xl font-black lg:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Griote Project-Africa est un espace ouvert à toutes celles et ceux
-              qui produisent, transmettent et valorisent le savoir africain.
-              Chercheur, étudiant, professionnel ou institution : votre contribution compte.
+              Un espace ouvert à tous ceux qui produisent et valorisent le savoir africain.
+      Chercheurs, étudiants, professionnels : votre contribution compte.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -191,7 +202,7 @@ const APropos = () => {
               <Link to="/contact">
                 <Button
                   variant="outline"
-                  className="px-12 py-8 text-2xl font-bold bg-transparent border-white text-white hover:bg-white/10 transition-all inline-flex items-center gap-4"
+                  className="px-12 py-8 text-xl font-semibold text-foreground bg-accent inline-flex items-center gap-3"
                 >
                   Nous contacter
                   <Mail className="w-12 h-12" /> {/* 48px */}
@@ -204,7 +215,6 @@ const APropos = () => {
 
       </main>
 
-      <Footer />
     </div>
   );
 };
