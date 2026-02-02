@@ -5,11 +5,11 @@ services:
     container_name: griote-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: griote               # même user que dans ton .env
-      POSTGRES_PASSWORD: griote           # même password que dans ton .env
+      POSTGRES_USER: griote
+      POSTGRES_PASSWORD: griote
       POSTGRES_DB: griote
     ports:
-      - "5432:5432"                       # tu peux enlever ça en prod
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -19,17 +19,17 @@ services:
       retries: 5
       start_period: 10s
 
-  # ====================== MinIO (S3 compatible) ======================
+  # ====================== MinIO ======================
   minio:
     image: minio/minio:latest
     container_name: griote-minio
     restart: unless-stopped
     environment:
-      MINIO_ROOT_USER: minioadmin         # doit correspondre à MINIO_ACCESS_KEY dans ton .env
-      MINIO_ROOT_PASSWORD: minioadmin     # doit correspondre à MINIO_SECRET_KEY dans ton .env
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
     ports:
-      - "9000:9000"                       # API S3
-      - "9001:9001"                       # Console web → http://localhost:9001
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
@@ -39,7 +39,23 @@ services:
       timeout: 20s
       retries: 3
 
-  # ====================== Ton app Node.js (monolithe) ======================
+  # ====================== Loki ======================
+  loki:
+    image: grafana/loki:latest
+    container_name: griote-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/var/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ====================== Backend ======================
   griote-backend:
     build:
       context: .
@@ -47,17 +63,30 @@ services:
     container_name: griote-backend
     restart: unless-stopped
     env_file:
-      - .env                              # charge toutes tes variables .env
+      - .env
     ports:
-      - "3000:3000"                       # API
+      - "3000:3000"
     depends_on:
       postgres:
         condition: service_healthy
       minio:
         condition: service_healthy
+      loki:
+        condition: service_healthy
     volumes:
-      - .:/usr/src/app                            # hot-reload en dev (tu peux enlever en prod)
-      - /usr/src/app/node_modules                 # évite d'écraser node_modules
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        labels: "service=backend"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # ====================== Prometheus ======================
   prometheus:
@@ -70,6 +99,11 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - griote-backend
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ====================== Grafana ======================
   grafana:
@@ -85,9 +119,11 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
-      - prometheus
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
 
-# ====================== VOLUMES ======================
 volumes:
   postgres_data:
     name: griote_postgres_data
@@ -95,8 +131,9 @@ volumes:
     name: griote_minio_data
   grafana_data:
     name: griote_grafana_data
+  loki_data:
+    name: griote_loki_data
 
-# ====================== NETWORK (optionnel mais propre) ======================
 networks:
   default:
     name: griote_network
