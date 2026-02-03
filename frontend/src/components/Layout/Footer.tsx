@@ -9,7 +9,7 @@ export default function Footer() {
   const { isAuthenticated, user } = useAuth()
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-background text-white bg-primary-gradient">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
 
         {/* === Ligne principale === */}

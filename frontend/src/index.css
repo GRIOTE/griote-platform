@@ -1,3 +1,7 @@
+/* =========================================
+   IMPORTS AND TAILWIND SETUP
+========================================= */
+
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
@@ -8,39 +12,51 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =========================================
-   Définition des variables CSS pour le design system
+   CSS VARIABLES (THEME: LIGHT / DARK)
 ========================================= */
+
 :root {
+  /* Base colors */
   --background: 0 0% 100%;
   --foreground: 217 19% 19%;
 
+  /* Card colors */
   --card: 0 0% 100%;
   --card-foreground: 217 19% 19%;
 
+  /* Popover colors */
   --popover: 0 0% 100%;
   --popover-foreground: 217 19% 19%;
 
+  /* Primary colors */
   --primary: 217 91% 60%;
   --primary-foreground: 0 0% 100%;
 
+  /* Secondary colors */
   --secondary: 217 91% 95%;
   --secondary-foreground: 217 91% 60%;
 
+  /* Muted colors */
   --muted: 217 91% 95%;
   --muted-foreground: 217 19% 46%;
 
+  /* Accent colors */
   --accent: 50 100% 68%;
   --accent-foreground: 217 91% 20%;
 
+  /* Destructive colors */
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 100%;
 
+  /* Border and input */
   --border: 217 19% 91%;
   --input: 217 19% 91%;
   --ring: 217 91% 60%;
 
+  /* Radius */
   --radius: 0.5rem;
 
+  /* Sidebar colors */
   --sidebar-background: 0 0% 98%;
   --sidebar-foreground: 217 19% 26%;
   --sidebar-primary: 217 91% 10%;
@@ -54,34 +70,44 @@
 
 /* Dark mode variables */
 .dark {
+  /* Base colors */
   --background: 217 91% 15%;
   --foreground: 0 0% 100%;
 
+  /* Card colors */
   --card: 217 91% 15%;
   --card-foreground: 0 0% 100%;
 
+  /* Popover colors */
   --popover: 217 91% 15%;
   --popover-foreground: 0 0% 100%;
 
+  /* Primary colors */
   --primary: 0 0% 100%;
   --primary-foreground: 217 91% 60%;
 
+  /* Secondary colors */
   --secondary: 217 19% 25%;
   --secondary-foreground: 0 0% 100%;
 
+  /* Muted colors */
   --muted: 217 19% 25%;
   --muted-foreground: 217 19% 65%;
 
+  /* Accent colors */
   --accent: 50 100% 68%;
   --accent-foreground: 217 91% 15%;
 
+  /* Destructive colors */
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 100%;
 
+  /* Border and input */
   --border: 217 19% 20%;
   --input: 217 19% 25%;
   --ring: 50 100% 68%;
 
+  /* Sidebar colors */
   --sidebar-background: 217 91% 10%;
   --sidebar-foreground: 217 91% 96%;
   --sidebar-primary: 50 100% 68%;
@@ -94,10 +120,75 @@
 }
 
 /* =========================================
-   Utilitaires CSS custom pour Tailwind
+   @LAYER BASE: GLOBAL STYLES
 ========================================= */
+
+@layer base {
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Ubuntu', sans-serif;
+  }
+}
+
+/* =========================================
+   @LAYER COMPONENTS: REUSABLE COMPONENTS
+========================================= */
+
+@layer components {
+  /* Buttons */
+  .griote-button {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--primary-foreground));
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105;
+  }
+
+  .griote-button-outline {
+    border: 2px solid hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105;
+  }
+
+  /* Cards */
+  .griote-card {
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    @apply shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  /* Typography */
+  .griote-title {
+    font-weight: bold;
+    font-size: 1.875rem;
+    color: hsl(var(--foreground));
+  }
+
+  .griote-subtitle {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: hsl(var(--foreground));
+  }
+
+  .griote-body {
+    font-size: 1rem;
+    color: hsl(var(--foreground));
+  }
+
+  .griote-secondary {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+  }
+}
+
+/* =========================================
+   @LAYER UTILITIES: CUSTOM UTILITIES
+========================================= */
+
 @layer utilities {
-  /* Backgrounds, foregrounds et bordures */
+  /* Color utilities */
   .bg-background { background-color: hsl(var(--background)); }
   .text-foreground { color: hsl(var(--foreground)); }
   .border-border { border-color: hsl(var(--border)); }
@@ -123,62 +214,51 @@
   .bg-destructive { background-color: hsl(var(--destructive)); }
   .text-destructive-foreground { color: hsl(var(--destructive-foreground)); }
 
-  .font-ubuntu { font-family: 'Ubuntu', sans-serif; }
-
-  /* Boutons Griote */
-  .griote-button {
-    background-color: hsl(var(--accent));
-    color: hsl(var(--primary-foreground));
-    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105;
-  }
-  .griote-button-outline {
-    border: 2px solid hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
-    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105;
+  /* Gradients */
+  .bg-primary-gradient {
+    background: linear-gradient(
+      to bottom right,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary) / 0.6) 50%,
+      hsl(var(--primary) / 0.8) 100%
+    );
   }
 
-  /* Cartes */
-  .griote-card {
-    background-color: hsl(var(--card));
-    color: hsl(var(--card-foreground));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    @apply shadow-lg hover:shadow-xl transition-all duration-300;
+  .bg-accent-gradient {
+    background: linear-gradient(
+      to bottom right,
+      hsl(var(--accent)) 0%,
+      hsl(var(--accent) / 0.5) 50%,
+      hsl(var(--accent) / 0.8) 100%
+    );
   }
 
-  /* Hover effect */
+  /* Hover effects */
   .griote-hover {
     @apply transition-all duration-300 transform hover:scale-105;
   }
 
-  /* Titres et textes */
-  .griote-title { font-weight: bold; font-size: 1.875rem; color: hsl(var(--foreground)); }
-  .griote-subtitle { font-weight: 600; font-size: 1.25rem; color: hsl(var(--foreground)); }
-  .griote-body { font-size: 1rem; color: hsl(var(--foreground)); }
-  .griote-secondary { font-size: 0.875rem; color: hsl(var(--muted-foreground)); }
-
   /* Background patterns */
-  .bg-bogolan { background-image: url('/images/bogolan-pattern.png'); background-size: cover; }
-  .bg-kente { background-image: url('/images/kente-pattern.png'); background-size: cover; }
+  .bg-bogolan {
+    background-image: url('/images/bogolan-pattern.png');
+    background-size: cover;
+  }
+
+  .bg-kente {
+    background-image: url('/images/kente-pattern.png');
+    background-size: cover;
+  }
+
+  /* Font utility */
+  .font-ubuntu {
+    font-family: 'Ubuntu', sans-serif;
+  }
 }
 
 /* =========================================
-   Global styles
+   ANIMATIONS AND KEYFRAMES
 ========================================= */
-body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-family: 'Ubuntu', sans-serif;
-}
 
-/* Exemple de border utility sur tous les éléments si nécessaire */
-* {
-  border-color: hsl(var(--border));
-}
-
-/* =========================================
-   Animations
-========================================= */
 @keyframes slideInLeft {
   from { opacity: 0; transform: translateX(-100px); }
   to { opacity: 1; transform: translateX(0); }
@@ -188,6 +268,10 @@ body {
   from { opacity: 0; transform: translateX(100px); }
   to { opacity: 1; transform: translateX(0); }
 }
+
+/* =========================================
+   THEME INLINE (SIDEBAR COLORS)
+========================================= */
 
 @theme inline {
   --color-sidebar: var(--sidebar);
@@ -199,16 +283,3 @@ body {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
-
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-    outline-color: hsl(var(--ring) / 0.5);
-  }
-
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
-}
-

@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import Header from '../components/Layout/Header';
-import Footer from '../components/Layout/Footer';
 import HeroSection from '../components/home/HeroSection';
 import EcosystemSection from '../components/home/EcosystemSection';
 import CallToActionSection from '../components/home/CallToActionSection';
@@ -27,9 +25,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-griote-white">
-      <Header />
-
+    <div className='flex flex-col'>
       <main>
         <HeroSection />
         <EcosystemSection />
@@ -46,8 +42,6 @@ const Home = () => {
         <CallToActionSection />
         <FaqSection />
       </main>
-
-      <Footer />
     </div>
   );
 };
