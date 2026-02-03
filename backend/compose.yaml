@@ -50,7 +50,7 @@ services:
       - loki_data:/var/loki
     command: -config.file=/etc/loki/local-config.yaml
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/loki/api/v1/status/ready || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -71,16 +71,9 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
-      loki:
-        condition: service_healthy
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://localhost:3100/loki/api/v1/push"
-        labels: "service=backend"
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1"]
       interval: 10s

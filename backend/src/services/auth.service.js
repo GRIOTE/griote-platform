@@ -75,9 +75,13 @@ async function login(email, password) {
   const payload = { id: user.user_id, role: user.role };
   const accessToken = signAccess(payload);
   const refreshTokenStr = signRefresh(payload);
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-  await RefreshToken.create({ token: refreshTokenStr, user_id: user.user_id, expires_at: expires });
+  await RefreshToken.create({
+    token: refreshTokenStr,
+    user_id: user.user_id,
+    expires_at: expires
+  });
 
   return { accessToken, refreshToken: refreshTokenStr, user };
 }
@@ -98,7 +102,6 @@ async function refreshTokens(oldRefresh) {
     throw new Error('Invalid or expired refresh token');
   }
 
-  // Récupère l'utilisateur frais (au cas où des données auraient changé)
   const user = await User.findByPk(payload.id);
   if (!user) {
     logger.warn('Refresh failed: user not found', { context: { userId: payload.id } });
@@ -107,6 +110,7 @@ async function refreshTokens(oldRefresh) {
 
   const newAccess = signAccess({ id: payload.id, role: payload.role });
   const newRefresh = signRefresh({ id: payload.id, role: payload.role });
+
   await dbToken.update({
     token: newRefresh,
     expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
@@ -142,7 +146,6 @@ async function resetPassword(token, newPassword) {
 
   if (payload.type !== 'PASSWORD_RESET') throw new Error('Invalid token type');
 
-  // Vérification utilisateur avant complexité du mot de passe
   const user = await User.findByPk(payload.user_id);
   if (!user) throw new Error('User not found');
 
@@ -155,7 +158,6 @@ async function resetPassword(token, newPassword) {
   await user.save();
   return user;
 }
-
 
 async function changePassword(user_id, oldPassword, newPassword) {
   if (!validatePasswordComplexity(newPassword)) {
@@ -173,7 +175,6 @@ async function changePassword(user_id, oldPassword, newPassword) {
   await user.save();
   return true;
 }
-
 
 async function findUserByEmail(email) {
   return await User.findOne({ where: { email } });

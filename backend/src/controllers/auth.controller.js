@@ -12,14 +12,9 @@ const changePasswordDTO = require('../dtos/changePassword.dto');
 async function register(req, res) {
   try {
     await validateRegister(req.body);
-
     const dto = registerDTO(req.body);
-
-    const { user, emailToken } =
-      await authService.registerUserWithEmailToken(dto);
-
+    const { user, emailToken } = await authService.registerUserWithEmailToken(dto);
     logger.info('User registered', { context: { userId: user.user_id, email: user.email } });
-
     return res.status(201).json({
       message: 'User registered. Please verify your email.',
       emailToken
@@ -28,13 +23,9 @@ async function register(req, res) {
     if (err.isJoi) {
       return res.status(400).json({
         message: 'Validation error',
-        details: err.details.map(d => ({
-          field: d.path.join('.'),
-          message: d.message
-        }))
+        details: err.details.map(d => ({ field: d.path.join('.'), message: d.message }))
       });
     }
-
     return res.status(400).json({ message: err.message });
   }
 }
@@ -43,6 +34,7 @@ async function verifyEmail(req, res) {
   try {
     const { token } = req.query;
     const user = await authService.verifyEmailToken(token);
+    if (!user) return res.status(400).json({ message: 'Invalid token or user not found' });
     logger.info('Email verified', { context: { userId: user.user_id, email: user.email } });
     return res.json({ message: 'Email verified successfully' });
   } catch (err) {
@@ -62,53 +54,34 @@ async function resendVerificationEmail(req, res) {
 }
 
 async function login(req, res) {
+  let dto;
   try {
-    const dto = loginDTO(req.body);
-
-    const { accessToken, refreshToken, user } =
-      await authService.login(dto.email, dto.password);
-
+    dto = loginDTO(req.body);
+    const { accessToken, refreshToken, user } = await authService.login(dto.email, dto.password);
     logger.info('User logged in', { context: { userId: user.user_id, email: user.email } });
-
     res.cookie('rt', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
-
-    return res.json({
-      accessToken,
-      user,
-      requiresInterfaceSelection: user.role === 'ADMIN'
-    });
+    return res.json({ accessToken, user, requiresInterfaceSelection: user.role === 'ADMIN' });
   } catch (err) {
-    if (err.message === 'Account not verified') {
+    if (dto && err.message === 'Account not verified') {
       logger.warn('Login failed: email not verified', { context: { email: dto.email } });
-      return res.status(400).json({
-        code: 'EMAIL_NOT_VERIFIED',
-        message: 'Votre email n\'est pas encore vérifié'
-      });
+      return res.status(400).json({ code: 'EMAIL_NOT_VERIFIED', message: 'Votre email n\'est pas encore vérifié' });
     }
-
-    logger.warn('Login failed', { context: { email: dto.email } });
+    const email = dto ? dto.email : undefined;
+    logger.warn('Login failed', { context: { email } });
     return res.status(400).json({ message: err.message });
   }
 }
 
 async function refreshToken(req, res) {
   try {
-    const dto = refreshDTO({
-      refreshToken: req.cookies.rt || req.body.refreshToken || req.headers['x-refresh-token']
-    });
-
-    if (!dto.refreshToken) {
-      return res.status(401).json({ message: 'No refresh token provided' });
-    }
-
-    const { accessToken, refreshToken: newRefreshToken, user } =
-      await authService.refreshTokens(dto.refreshToken);
-
+    const dto = refreshDTO({ refreshToken: req.cookies.rt || req.body.refreshToken || req.headers['x-refresh-token'] });
+    if (!dto.refreshToken) return res.status(401).json({ message: 'No refresh token provided' });
+    const { accessToken, refreshToken: newRefreshToken, user } = await authService.refreshTokens(dto.refreshToken);
     res.cookie('rt', newRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -116,11 +89,7 @@ async function refreshToken(req, res) {
       path: '/api/auth/refresh',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
-
-    return res.json({
-      accessToken,
-      user
-    });
+    return res.json({ accessToken, user });
   } catch (err) {
     res.clearCookie('rt', { path: '/api/auth/refresh' });
     return res.status(401).json({ message: err.message || 'Invalid refresh token' });
@@ -129,24 +98,9 @@ async function refreshToken(req, res) {
 
 async function logout(req, res) {
   try {
-    const dto = logoutDTO({
-      refreshToken:
-        req.cookies.rt ||
-        req.body.refreshToken ||
-        req.headers['x-refresh-token']
-    });
-
-    if (dto.refreshToken) {
-      await authService.revokeRefresh(dto.refreshToken);
-    }
-
-    res.clearCookie('rt', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/api/auth/refresh'
-    });
-
+    const dto = logoutDTO({ refreshToken: req.cookies.rt || req.body.refreshToken || req.headers['x-refresh-token'] });
+    if (dto.refreshToken) await authService.revokeRefresh(dto.refreshToken);
+    res.clearCookie('rt', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/api/auth/refresh' });
     return res.json({ message: 'Logged out successfully' });
   } catch (err) {
     return res.status(400).json({ message: err.message });
@@ -178,14 +132,8 @@ async function resetPassword(req, res) {
 async function changePassword(req, res) {
   try {
     const dto = changePasswordDTO(req.body);
-    await authService.changePassword(
-      req.user.id,
-      dto.oldPassword,
-      dto.newPassword
-    );
-
-    logger.info('Password changed', { context: { userId: req.user.id } });
-
+    await authService.changePassword(req.user.user_id, dto.oldPassword, dto.newPassword);
+    logger.info('Password changed', { context: { userId: req.user.user_id } });
     return res.json({ message: 'Password changed successfully' });
   } catch (err) {
     return res.status(400).json({ message: err.message });
