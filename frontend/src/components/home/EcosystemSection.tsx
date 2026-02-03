@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 
 export default function EcosystemSection() {
   return (
-    <section className="py-16 lg:py-8 bg-background">
+    <section className="py-16 lg:py-8 bg-">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Titre */}
@@ -41,8 +41,7 @@ export default function EcosystemSection() {
           {/* ===================== */}
           {/* COLONNE GAUCHE */}
           {/* ===================== */}
-          <Card className="lg:flex-1 flex flex-col h-full bg-gradient-to-br from-primary/95 to-blue-800/95 text-white shadow-xl overflow-hidden relative">
-            <div className="absolute inset-0 bg-black/5" />
+          <Card className="lg:flex-1 flex flex-col h-full bg-primary-gradient text-white shadow-xl overflow-hidden relative">
 
             <CardHeader className="p-8 lg:p-12 relative z-10">
               <Archive className="w-16 h-16 mb-6" />
@@ -82,7 +81,6 @@ export default function EcosystemSection() {
                   alt="Dépôt de connaissances"
                   className="w-full h-full object-cover opacity-30"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
               </div>
             </CardContent>
           </Card>
@@ -158,7 +156,7 @@ export default function EcosystemSection() {
               </div>
 
               {/* Ligne 2 */}
-              <Card className="shadow-lg bg-accent">
+              <Card className="shadow-lg bg-accent-gradient">
                 <CardHeader className="p-6 lg:p-8">
                   <BrainCircuit className="w-12 h-12 mb-4 text-primary" />
                   <CardTitle className="text-2xl lg:text-3xl font-bold">
@@ -196,7 +194,8 @@ export default function EcosystemSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className="text-lg px-8 py-6 font-semibold"
+                className="text-lg px-8 py-6 font-semibold hover:bg-[#FFE45C]"
+
                 asChild
               >
                 <a

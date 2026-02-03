@@ -1,0 +1,12 @@
+{
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true
+  },
+  "editor.largeFileOptimizations": true,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "eslint.enable": false
+}
