@@ -171,15 +171,17 @@ const MonCompte: React.FC = () => {
     e.preventDefault();
     setLoading((prev) => ({ ...prev, profile: true }));
 
-    const dataToSend = {
-      first_name: profile.firstName,
-      last_name: profile.lastName,
-      bio: profile.bio,
-      date_of_birth: profile.dateOfBirth,
-      linkedin_url: profile.linkedinUrl,
-      github_url: profile.githubUrl,
-      website_url: profile.websiteUrl,
-    };
+    // Only send fields that have values (not empty strings)
+    const dataToSend: Record<string, any> = {};
+    
+    if (profile.firstName.trim()) dataToSend.first_name = profile.firstName;
+    if (profile.lastName.trim()) dataToSend.last_name = profile.lastName;
+    if (profile.bio.trim()) dataToSend.bio = profile.bio;
+    if (profile.dateOfBirth.trim()) dataToSend.date_of_birth = profile.dateOfBirth;
+    if (profile.linkedinUrl.trim()) dataToSend.linkedin_url = profile.linkedinUrl;
+    if (profile.githubUrl.trim()) dataToSend.github_url = profile.githubUrl;
+    if (profile.websiteUrl.trim()) dataToSend.website_url = profile.websiteUrl;
+    
     console.log('Sending data:', dataToSend);
 
     try {
