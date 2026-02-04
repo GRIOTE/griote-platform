@@ -33,3 +33,9 @@ export async function removeProfilePicture(): Promise<any> {
   const res = await api.delete('/users/me/profile-picture');
   return res.data;
 }
+
+// Supprimer son propre compte
+export async function deleteAccount(): Promise<any> {
+  const res = await api.delete('/users/me');
+  return res.data;
+}
