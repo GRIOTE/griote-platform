@@ -40,6 +40,18 @@ async function getFullProfile(user_id) {
 }
 
 /**
+ * Validate URL format
+ */
+function isValidUrl(string) {
+  try {
+    const url = new URL(string);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (_) {
+    return false;
+  }
+}
+
+/**
  * Update full profile (self)
  */
 async function updateFullProfile(user_id, data) {
@@ -58,13 +70,49 @@ async function updateFullProfile(user_id, data) {
     date_of_birth
   } = data;
 
+  // Validate date_of_birth if provided
+  if (date_of_birth !== undefined && date_of_birth !== null && date_of_birth !== '') {
+    const dob = new Date(date_of_birth);
+    if (isNaN(dob.getTime())) {
+      throw new Error('Date de naissance invalide');
+    }
+    if (dob > new Date()) {
+      throw new Error('La date de naissance ne peut pas être dans le futur');
+    }
+    // Check if person is at least 5 years old (reasonable minimum)
+    const minDate = new Date();
+    minDate.setFullYear(minDate.getFullYear() - 120);
+    if (dob < minDate) {
+      throw new Error('Date de naissance invalide');
+    }
+    user.date_of_birth = date_of_birth;
+  }
+
+  // Validate URLs if provided
+  if (linkedin_url !== undefined && linkedin_url !== null && linkedin_url.trim() !== '') {
+    if (!isValidUrl(linkedin_url)) {
+      throw new Error('URL LinkedIn invalide');
+    }
+    user.linkedin_url = linkedin_url;
+  }
+  
+  if (github_url !== undefined && github_url !== null && github_url.trim() !== '') {
+    if (!isValidUrl(github_url)) {
+      throw new Error('URL GitHub invalide');
+    }
+    user.github_url = github_url;
+  }
+  
+  if (website_url !== undefined && website_url !== null && website_url.trim() !== '') {
+    if (!isValidUrl(website_url)) {
+      throw new Error('URL du site web invalide');
+    }
+    user.website_url = website_url;
+  }
+
   if (first_name !== undefined) user.first_name = first_name;
   if (last_name !== undefined) user.last_name = last_name;
   if (bio !== undefined) user.bio = bio;
-  if (linkedin_url !== undefined) user.linkedin_url = linkedin_url;
-  if (github_url !== undefined) user.github_url = github_url;
-  if (website_url !== undefined) user.website_url = website_url;
-  if (date_of_birth !== undefined) user.date_of_birth = date_of_birth;
 
   await user.save();
 

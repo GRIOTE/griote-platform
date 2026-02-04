@@ -16,7 +16,7 @@ export async function updateProfile(data: Partial<User>): Promise<User> {
 
 // Changer le mot de passe
 export async function changePassword(data: { oldPassword: string; newPassword: string }): Promise<any> {
-  const res = await api.put<User>('/users/change-password', data);
+  const res = await api.post<User>('/users/me/change-password', data);
   return res.data;
 }
 
@@ -31,5 +31,11 @@ export async function setProfilePicture(formData: FormData): Promise<any> {
 // Supprimer la photo de profil
 export async function removeProfilePicture(): Promise<any> {
   const res = await api.delete('/users/me/profile-picture');
+  return res.data;
+}
+
+// Supprimer son propre compte
+export async function deleteAccount(): Promise<any> {
+  const res = await api.delete('/users/me');
   return res.data;
 }
