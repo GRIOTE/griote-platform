@@ -16,7 +16,7 @@ export async function updateProfile(data: Partial<User>): Promise<User> {
 
 // Changer le mot de passe
 export async function changePassword(data: { oldPassword: string; newPassword: string }): Promise<any> {
-  const res = await api.put<User>('/users/change-password', data);
+  const res = await api.post<User>('/users/me/change-password', data);
   return res.data;
 }
 

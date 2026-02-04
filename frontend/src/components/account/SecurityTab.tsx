@@ -6,6 +6,17 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { changePassword, deleteAccount } from '@/services/user.service';
 
 interface SecurityTabProps {
@@ -80,17 +91,18 @@ export function SecurityTab({ onLogout }: SecurityTabProps) {
     }
   };
 
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+
   const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      'Êtes-vous ABSOLUMENT sûr de vouloir supprimer votre compte ? Cette action est irréversible et toutes vos données seront perdues.'
-    );
-    if (!confirmed) return;
+    if (deleteConfirmation !== 'SUPPRIMER') {
+      toast.error('Vous devez taper \"SUPPRIMER\" pour confirmer');
+      setDeleteConfirmation('');
+      return;
+    }
 
-    const confirmedAgain = window.prompt(
-      'Cette action est définitive. Tapez "SUPPRIMER" pour confirmer la suppression de votre compte.'
-    );
-    if (confirmedAgain !== 'SUPPRIMER') return;
-
+    setShowDeleteDialog(false);
+    setDeleteConfirmation('');
     setLoading((prev) => ({ ...prev, delete: true }));
 
     try {
@@ -177,16 +189,53 @@ export function SecurityTab({ onLogout }: SecurityTabProps) {
           <p className="text-sm text-red-600 mb-4">
             Cette action est irréversible. Toutes vos données seront définitivement supprimées.
           </p>
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleDeleteAccount}
-            disabled={loading.delete}
-            className="w-full"
-          >
-            <Trash className="mr-2 h-4 w-4" />
-            {loading.delete ? 'Suppression en cours...' : 'Supprimer mon compte'}
-          </Button>
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                variant="destructive"
+                className="w-full"
+                disabled={loading.delete}
+              >
+                <Trash className="mr-2 h-4 w-4" />
+                {loading.delete ? 'Suppression en cours...' : 'Supprimer mon compte'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-red-600">
+                  Êtes-vous absolument sûr ?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-left">
+                  Cette action est <span className="font-semibold text-red-600">irréversible</span>.
+                  Toutes vos données seront définitivement supprimées et vous ne pourrez pas les récupérer.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="py-4">
+                <Label htmlFor="delete-confirm" className="text-left block mb-2">
+                  Tapez <span className="font-semibold">SUPPRIMER</span> pour confirmer :
+                </Label>
+                <Input
+                  id="delete-confirm"
+                  value={deleteConfirmation}
+                  onChange={(e) => setDeleteConfirmation(e.target.value)}
+                  placeholder="SUPPRIMER"
+                  className="uppercase text-center font-semibold"
+                  autoComplete="off"
+                />
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                  disabled={deleteConfirmation !== 'SUPPRIMER'}
+                >
+                  Supprimer définitivement
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
 
         <Separator className="my-6 bg-griote-gray-200" />
