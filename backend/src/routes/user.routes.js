@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user.controller');
+const statsController = require('../controllers/stats.controller');
 const { authMiddleware } = require('../middleware/auth.middleware');
 const { requireAdmin } = require('../middleware/role.middleware');
 const { single: uploadSingle } = require('../middleware/upload.middleware');
@@ -22,11 +23,17 @@ router.post('/me/change-password', userController.changePassword);
 /* ========================= ADMIN ROUTES ========================= */
 router.use(requireAdmin);
 
-router.get('/users', userController.getAllUsers);
-router.get('/users/:id', userController.getUserById);
-router.post('/users', userController.createAdmin);
-router.patch('/users/:id/role', userController.updateUserRole);
-router.put('/users/:id', userController.updateUser);
-router.delete('/users/:id', userController.deleteUser);
+router.get('/', userController.getAllUsers);
+router.get('/:id', userController.getUserById);
+router.post('/', userController.createAdmin);
+router.patch('/:id/role', userController.updateUserRole);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
+
+// Stats routes
+router.get('/total-users', statsController.getTotalUsers);
+router.get('/verified-users', statsController.getVerifiedUsers);
+router.get('/total-depots', statsController.getTotalDepots);
+router.get('/total-documents', statsController.getTotalDocuments);
 
 module.exports = router;
