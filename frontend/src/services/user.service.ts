@@ -21,17 +21,31 @@ export async function changePassword(data: { oldPassword: string; newPassword: s
 }
 
 // Uploader une photo de profil
-export async function setProfilePicture(formData: FormData): Promise<any> {
-  const res = await api.post('/users/me/profile-picture', formData, {
+export async function setProfilePicture(formData: FormData): Promise<User> {
+  const res = await api.post<{ user: User }>('/users/me/profile-picture', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
-  return res.data;
+  // Mettre à jour le localStorage avec la nouvelle image de profil
+  updateLocalStorageUser(res.data.user);
+  return res.data.user;
 }
 
 // Supprimer la photo de profil
-export async function removeProfilePicture(): Promise<any> {
-  const res = await api.delete('/users/me/profile-picture');
-  return res.data;
+export async function removeProfilePicture(): Promise<User> {
+  const res = await api.delete<{ user: User }>('/users/me/profile-picture');
+  // Mettre à jour le localStorage
+  updateLocalStorageUser(res.data.user);
+  return res.data.user;
+}
+
+// Mettre à jour l'utilisateur dans localStorage
+function updateLocalStorageUser(updatedUser: User): void {
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    const currentUser = JSON.parse(storedUser);
+    const mergedUser = { ...currentUser, ...updatedUser };
+    localStorage.setItem('user', JSON.stringify(mergedUser));
+  }
 }
 
 // Supprimer son propre compte

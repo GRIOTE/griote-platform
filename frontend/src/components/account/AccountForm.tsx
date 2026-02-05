@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { updateProfile, getProfile, setProfilePicture as uploadProfilePicture } from '@/services/user.service';
+import { updateProfile, setProfilePicture as uploadProfilePicture } from '@/services/user.service';
 import type { User } from '@/services/auth.service';
 
 interface AccountFormProps {
@@ -61,9 +61,10 @@ export function AccountForm({ user, onProfileUpdate }: AccountFormProps) {
     setLoading((prev) => ({ ...prev, upload: true }));
 
     try {
-      await uploadProfilePicture(formData);
-      const freshUser = await getProfile();
-      setProfilePicture(freshUser.profile_picture || null);
+      const updatedUser = await uploadProfilePicture(formData);
+      if (updatedUser && updatedUser.profile_picture) {
+        setProfilePicture(updatedUser.profile_picture);
+      }
       onProfileUpdate();
       toast.success('Photo de profil mise à jour avec succès');
     } catch (error) {

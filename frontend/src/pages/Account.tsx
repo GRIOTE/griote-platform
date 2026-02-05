@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, FileText, Lock, ArrowLeft } from 'lucide-react';
@@ -9,8 +10,21 @@ import { getProfile } from '@/services/user.service';
 import { ProfileHeader, AccountForm, SecurityTab, MyDepotsTab } from '@/components/account';
 
 const Account: React.FC = () => {
-  const { user, logout, refreshUser } = useAuth();
+  const { user, logout, refreshUser, isLoading } = useAuth();
   const navigate = useNavigate();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-griote-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-griote-blue" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
 
   const handleLogout = async () => {
     try {
