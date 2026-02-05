@@ -1,6 +1,7 @@
 // src/auth/AuthProvider.tsx
 import { createContext, useState, useEffect, type ReactNode } from 'react';
 import { type User, login, register, logout, getUser, type LoginResponse } from '@/services/auth.service';
+import { getProfile } from '@/services/user.service';
 
 interface AuthContextType {
   user: User | null;
@@ -29,7 +30,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const handleLogin = async (email: string, password: string) => {
     const res = await login(email, password);
-    setUser(res.user);
+    
+    // Always fetch full profile after login to ensure profile_picture is available
+    try {
+      const fullProfile = await getProfile();
+      localStorage.setItem('user', JSON.stringify(fullProfile));
+      setUser(fullProfile);
+    } catch (error) {
+      console.error('Failed to fetch full profile:', error);
+      setUser(res.user);
+    }
+    
     return res;
   };
 
