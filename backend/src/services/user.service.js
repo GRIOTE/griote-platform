@@ -36,6 +36,10 @@ async function getFullProfile(user_id) {
   const userJson = user.toJSON();
   userJson.profile_picture = latestImage?.url || null;
 
+  // Transform is_email_verified to email_verified for frontend compatibility
+  userJson.email_verified = userJson.is_email_verified;
+  delete userJson.is_email_verified;
+
   return userJson;
 }
 
@@ -131,7 +135,11 @@ async function getUserById(user_id) {
     throw new Error('User not found');
   }
 
-  return user;
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const userJson = user.toJSON();
+  userJson.email_verified = userJson.is_email_verified;
+  delete userJson.is_email_verified;
+  return userJson;
 }
 
 /**
@@ -247,8 +255,16 @@ async function getAllUsers(page = 1, limit = 10, filters = {}) {
     attributes: { exclude: ['password_hash'] }
   });
 
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const users = rows.map(user => {
+    const userJson = user.toJSON();
+    userJson.email_verified = userJson.is_email_verified;
+    delete userJson.is_email_verified;
+    return userJson;
+  });
+
   return {
-    users: rows,
+    users,
     totalUsers: count,
     totalPages: Math.ceil(count / limit),
     currentPage: Number(page)
@@ -278,7 +294,10 @@ async function createAdmin(adminData) {
     is_email_verified: true
   });
 
+  // Transform is_email_verified to email_verified for frontend compatibility
   const { password_hash: _, ...adminWithoutPassword } = admin.toJSON();
+  adminWithoutPassword.email_verified = adminWithoutPassword.is_email_verified;
+  delete adminWithoutPassword.is_email_verified;
   return adminWithoutPassword;
 }
 
@@ -300,7 +319,10 @@ async function updateUserRole(user_id, newRole) {
   user.role = newRole;
   await user.save();
 
-  const { password_hash: _, ...userWithoutPassword } = user.toJSON();
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const userWithoutPassword = user.toJSON();
+  userWithoutPassword.email_verified = userWithoutPassword.is_email_verified;
+  delete userWithoutPassword.is_email_verified;
   return userWithoutPassword;
 }
 
@@ -349,7 +371,10 @@ async function updateUser(user_id, updateData) {
 
   await user.update(filteredData);
 
-  const { password_hash: _, ...userWithoutPassword } = user.toJSON();
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const userWithoutPassword = user.toJSON();
+  userWithoutPassword.email_verified = userWithoutPassword.is_email_verified;
+  delete userWithoutPassword.is_email_verified;
   return userWithoutPassword;
 }
 

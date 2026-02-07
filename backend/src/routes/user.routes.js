@@ -23,17 +23,17 @@ router.post('/me/change-password', userController.changePassword);
 /* ========================= ADMIN ROUTES ========================= */
 router.use(requireAdmin);
 
+// Stats routes (must be before /:id routes)
+router.get('/total-users', statsController.getTotalUsers);
+router.get('/verified-users', statsController.getVerifiedUsers);
+router.get('/total-depots', statsController.getTotalDepots);
+router.get('/total-documents', statsController.getTotalDocuments);
+
 router.get('/', userController.getAllUsers);
 router.get('/:id', userController.getUserById);
 router.post('/', userController.createAdmin);
 router.patch('/:id/role', userController.updateUserRole);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
-
-// Stats routes
-router.get('/total-users', statsController.getTotalUsers);
-router.get('/verified-users', statsController.getVerifiedUsers);
-router.get('/total-depots', statsController.getTotalDepots);
-router.get('/total-documents', statsController.getTotalDocuments);
 
 module.exports = router;

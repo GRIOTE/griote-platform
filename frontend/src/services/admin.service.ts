@@ -102,12 +102,12 @@ export async function getVerifiedUsers(): Promise<{ verifiedUsers: number }> {
 }
 
 export async function getTotalDepots(): Promise<{ totalDepots: number }> {
-  const res = await api.get<{ totalDepots: number }>('/depot/stats/total-depots');
+  const res = await api.get<{ totalDepots: number }>('/depots/stats/total-depots');
   return res.data;
 }
 
 export async function getTotalDocuments(): Promise<{ totalDocuments: number }> {
-  const res = await api.get<{ totalDocuments: number }>('/depot/stats/total-documents');
+  const res = await api.get<{ totalDocuments: number }>('/depots/stats/total-documents');
   return res.data;
 }
 
