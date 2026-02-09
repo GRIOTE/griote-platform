@@ -112,10 +112,10 @@ export default function AdminTags() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredTags.map((tag) => (
           <Card key={tag.tag_id} className="flex flex-col justify-between">
-            <CardContent className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">{tag.name}</CardTitle>
-                <div className="flex gap-2">
+            <CardContent className="flex flex-col gap-2 pt-6">
+              <div className="flex items-center justify-between w-full">
+                <CardTitle className="text-sm font-medium truncate">{tag.name}</CardTitle>
+                <div className="flex gap-2 shrink-0">
                   <Button
                     size="sm"
                     variant="outline"

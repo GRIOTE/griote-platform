@@ -62,52 +62,52 @@ export async function getAllUsers(filters: AdminFilters = {}): Promise<UsersList
   if (filters.email) params.append('email', filters.email);
   if (filters.name) params.append('name', filters.name);
 
-  const res = await api.get<UsersListResponse>(`/users/admin/users?${params.toString()}`);
+  const res = await api.get<UsersListResponse>(`/users?${params.toString()}`);
   return res.data;
 }
 
 export async function getUserById(userId: string): Promise<User> {
-  const res = await api.get<User>(`/users/admin/users/${userId}`);
+  const res = await api.get<User>(`/users/${userId}`);
   return res.data;
 }
 
 export async function updateUser(userId: string, data: Partial<User>): Promise<User> {
-  const res = await api.put<User>(`/users/admin/users/${userId}`, data);
+  const res = await api.put<User>(`/users/${userId}`, data);
   return res.data;
 }
 
 export async function updateUserRole(userId: string, role: 'USER' | 'ADMIN'): Promise<User> {
-  const res = await api.patch<User>(`/users/admin/users/${userId}/role`, { role });
+  const res = await api.patch<User>(`/users/${userId}/role`, { role });
   return res.data;
 }
 
 export async function deleteUser(userId: string): Promise<void> {
-  await api.delete(`/users/admin/users/${userId}`);
+  await api.delete(`/users/${userId}`);
 }
 
 export async function createUser(data: { email: string; password: string; first_name: string; last_name: string }): Promise<User> {
-  const res = await api.post<User>('/users/admin/users', data);
+  const res = await api.post<User>('/users', data);
   return res.data;
 }
 
 // STATS
 export async function getTotalUsers(): Promise<{ totalUsers: number }> {
-  const res = await api.get<{ totalUsers: number }>('/users/stats/total-users');
+  const res = await api.get<{ totalUsers: number }>('/users/total-users');
   return res.data;
 }
 
 export async function getVerifiedUsers(): Promise<{ verifiedUsers: number }> {
-  const res = await api.get<{ verifiedUsers: number }>('/users/stats/verified-users');
+  const res = await api.get<{ verifiedUsers: number }>('/users/verified-users');
   return res.data;
 }
 
 export async function getTotalDepots(): Promise<{ totalDepots: number }> {
-  const res = await api.get<{ totalDepots: number }>('/depot/stats/total-depots');
+  const res = await api.get<{ totalDepots: number }>('/depots/stats/total-depots');
   return res.data;
 }
 
 export async function getTotalDocuments(): Promise<{ totalDocuments: number }> {
-  const res = await api.get<{ totalDocuments: number }>('/depot/stats/total-documents');
+  const res = await api.get<{ totalDocuments: number }>('/depots/stats/total-documents');
   return res.data;
 }
 

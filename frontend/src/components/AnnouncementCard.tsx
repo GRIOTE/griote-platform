@@ -13,6 +13,13 @@ import {
 } from './ui/dialog';
 import DefaultAnnouncementImage from './DefaultAnnouncementImage';
 
+// Utility function to strip HTML tags from content
+function stripHtmlTags(html: string): string {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
 export interface Announcement {
   announcement_id: number;
   titre: string;
@@ -39,15 +46,25 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const title = announcement.titre;
-  const description = announcement.contenu.length > 150
-    ? announcement.contenu.substring(0, 150) + '...'
-    : announcement.contenu;
+  // Strip HTML tags before truncating for the card preview
+  const plainTextContent = stripHtmlTags(announcement.contenu);
+  const description = plainTextContent.length > 150
+    ? plainTextContent.substring(0, 150) + '...'
+    : plainTextContent;
   const publishedAt = announcement.date_publication || announcement.date_creation;
 
   const handleCardClick = () => {
     setIsModalOpen(true);
     if (onView) {
       onView(announcement.announcement_id.toString());
+    }
+  };
+
+  const handleModalClose = (open: boolean) => {
+    setIsModalOpen(open);
+    if (!open) {
+      // Reset image error when modal closes so it retries on next open
+      setImageError(false);
     }
   };
 
@@ -127,7 +144,7 @@ const AnnouncementCard = ({ announcement, onView, className = '' }: Announcement
       </Card>
 
       {/* Modal pour afficher les détails de l'annonce */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <Dialog open={isModalOpen} onOpenChange={handleModalClose}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <X className="h-4 w-4" />
