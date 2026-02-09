@@ -12,7 +12,7 @@ class StatsService {
 
   async getVerifiedUsers() {
     try {
-      const count = await User.count({ where: { email_verified: true } });
+      const count = await User.count({ where: { is_email_verified: true } });
       return { verifiedUsers: count };
     } catch (error) {
       throw new Error(`Failed to get verified users: ${error.message}`);

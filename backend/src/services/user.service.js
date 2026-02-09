@@ -36,7 +36,23 @@ async function getFullProfile(user_id) {
   const userJson = user.toJSON();
   userJson.profile_picture = latestImage?.url || null;
 
+  // Transform is_email_verified to email_verified for frontend compatibility
+  userJson.email_verified = userJson.is_email_verified;
+  delete userJson.is_email_verified;
+
   return userJson;
+}
+
+/**
+ * Validate URL format
+ */
+function isValidUrl(string) {
+  try {
+    const url = new URL(string);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (_) {
+    return false;
+  }
 }
 
 /**
@@ -58,13 +74,49 @@ async function updateFullProfile(user_id, data) {
     date_of_birth
   } = data;
 
+  // Validate date_of_birth if provided
+  if (date_of_birth !== undefined && date_of_birth !== null && date_of_birth !== '') {
+    const dob = new Date(date_of_birth);
+    if (isNaN(dob.getTime())) {
+      throw new Error('Date de naissance invalide');
+    }
+    if (dob > new Date()) {
+      throw new Error('La date de naissance ne peut pas être dans le futur');
+    }
+    // Check if person is at least 5 years old (reasonable minimum)
+    const minDate = new Date();
+    minDate.setFullYear(minDate.getFullYear() - 120);
+    if (dob < minDate) {
+      throw new Error('Date de naissance invalide');
+    }
+    user.date_of_birth = date_of_birth;
+  }
+
+  // Validate URLs if provided
+  if (linkedin_url !== undefined && linkedin_url !== null && linkedin_url.trim() !== '') {
+    if (!isValidUrl(linkedin_url)) {
+      throw new Error('URL LinkedIn invalide');
+    }
+    user.linkedin_url = linkedin_url;
+  }
+  
+  if (github_url !== undefined && github_url !== null && github_url.trim() !== '') {
+    if (!isValidUrl(github_url)) {
+      throw new Error('URL GitHub invalide');
+    }
+    user.github_url = github_url;
+  }
+  
+  if (website_url !== undefined && website_url !== null && website_url.trim() !== '') {
+    if (!isValidUrl(website_url)) {
+      throw new Error('URL du site web invalide');
+    }
+    user.website_url = website_url;
+  }
+
   if (first_name !== undefined) user.first_name = first_name;
   if (last_name !== undefined) user.last_name = last_name;
   if (bio !== undefined) user.bio = bio;
-  if (linkedin_url !== undefined) user.linkedin_url = linkedin_url;
-  if (github_url !== undefined) user.github_url = github_url;
-  if (website_url !== undefined) user.website_url = website_url;
-  if (date_of_birth !== undefined) user.date_of_birth = date_of_birth;
 
   await user.save();
 
@@ -83,7 +135,11 @@ async function getUserById(user_id) {
     throw new Error('User not found');
   }
 
-  return user;
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const userJson = user.toJSON();
+  userJson.email_verified = userJson.is_email_verified;
+  delete userJson.is_email_verified;
+  return userJson;
 }
 
 /**
@@ -199,8 +255,16 @@ async function getAllUsers(page = 1, limit = 10, filters = {}) {
     attributes: { exclude: ['password_hash'] }
   });
 
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const users = rows.map(user => {
+    const userJson = user.toJSON();
+    userJson.email_verified = userJson.is_email_verified;
+    delete userJson.is_email_verified;
+    return userJson;
+  });
+
   return {
-    users: rows,
+    users,
     totalUsers: count,
     totalPages: Math.ceil(count / limit),
     currentPage: Number(page)
@@ -230,7 +294,10 @@ async function createAdmin(adminData) {
     is_email_verified: true
   });
 
+  // Transform is_email_verified to email_verified for frontend compatibility
   const { password_hash: _, ...adminWithoutPassword } = admin.toJSON();
+  adminWithoutPassword.email_verified = adminWithoutPassword.is_email_verified;
+  delete adminWithoutPassword.is_email_verified;
   return adminWithoutPassword;
 }
 
@@ -252,7 +319,10 @@ async function updateUserRole(user_id, newRole) {
   user.role = newRole;
   await user.save();
 
-  const { password_hash: _, ...userWithoutPassword } = user.toJSON();
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const userWithoutPassword = user.toJSON();
+  userWithoutPassword.email_verified = userWithoutPassword.is_email_verified;
+  delete userWithoutPassword.is_email_verified;
   return userWithoutPassword;
 }
 
@@ -301,7 +371,10 @@ async function updateUser(user_id, updateData) {
 
   await user.update(filteredData);
 
-  const { password_hash: _, ...userWithoutPassword } = user.toJSON();
+  // Transform is_email_verified to email_verified for frontend compatibility
+  const userWithoutPassword = user.toJSON();
+  userWithoutPassword.email_verified = userWithoutPassword.is_email_verified;
+  delete userWithoutPassword.is_email_verified;
   return userWithoutPassword;
 }
 

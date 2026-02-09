@@ -13,12 +13,33 @@ const PORT = process.env.PORT || 3000;
 async function seedInitialData() {
   try {
     const adminPassword = await bcrypt.hash('admin123', 10);
+    const userPassword = await bcrypt.hash('user123', 10);
+
+
     await User.create({
       email: 'admin@griote.com',
       password_hash: adminPassword,
       first_name: 'Admin',
       last_name: 'Griote',
       role: 'ADMIN',
+      is_email_verified: true
+    });
+
+    await User.create({
+      email: 'user1@griote.com',
+      password_hash: userPassword,
+      first_name: 'user1',
+      last_name: 'name1',
+      role: 'USER',
+      is_email_verified: true
+    });
+
+    await User.create({
+      email: 'user2@griote.com',
+      password_hash: userPassword,
+      first_name: 'user2',
+      last_name: 'name2',
+      role: 'USER',
       is_email_verified: true
     });
 

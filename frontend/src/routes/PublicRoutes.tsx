@@ -2,6 +2,7 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import { useAuth } from "@/auth/useAuth"
 import MainLayout from "@/components/Layout/MainLayout"
+import AuthLayout from "@/components/Layout/AuthLayout"
 
 import Home from "@/pages/Home"
 import Depots from "@/pages/ExploreDepots"
@@ -23,18 +24,8 @@ export default function PublicRoutes() {
 
   return (
     <Routes>
-      <Route element={<MainLayout />}>
-        {/* Landing page */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated
-              ? <Navigate to="/depots" replace />
-              : <Home />
-          }
-        />
-
-        {/* Auth */}
+      {/* Routes sans header/footer - Auth only */}
+      <Route element={<AuthLayout />}>
         <Route
           path="/connexion"
           element={
@@ -49,6 +40,19 @@ export default function PublicRoutes() {
             isAuthenticated
               ? <Navigate to="/depots" replace />
               : <Inscription />
+          }
+        />
+      </Route>
+
+      {/* Routes avec header/footer */}
+      <Route element={<MainLayout />}>
+        {/* Landing page */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated
+              ? <Navigate to="/depots" replace />
+              : <Home />
           }
         />
 

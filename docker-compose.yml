@@ -17,23 +17,23 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - griote_internal
+      - lescracks_app-net
 
   # ====================== MinIO ======================
   minio-griote:
     image: minio/minio:latest
     container_name: griote-minio
     restart: unless-stopped
-    command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
-      timeout: 10s
+      timeout: 20s
       retries: 3
     labels:
       - "traefik.enable=true"
@@ -42,8 +42,7 @@ services:
       - "traefik.http.routers.minio.tls.certresolver=le"
       - "traefik.http.services.minio.loadbalancer.server.port=9001"
     networks:
-      - web
-      - griote_internal
+      - lescracks_app-net
 
   # ====================== Backend API ======================
   backend-griote:
@@ -63,15 +62,20 @@ services:
       - "traefik.http.routers.griote-api.entrypoints=websecure"
       - "traefik.http.routers.griote-api.tls.certresolver=le"
       - "traefik.http.services.griote-api.loadbalancer.server.port=3000"
+    volumes:
+      - backend-logs:/usr/src/app/logs
     networks:
-      - web
-      - griote_internal
+      - lescracks_app-net
 
   # ====================== Frontend ======================
   frontend-griote:
     image: brandonkamga237/frontend-griote:latest
     container_name: griote-frontend
     restart: unless-stopped
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend-griote
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.griote.rule=Host(`griote.org`)"
@@ -79,7 +83,7 @@ services:
       - "traefik.http.routers.griote.tls.certresolver=le"
       - "traefik.http.services.griote.loadbalancer.server.port=80"
     networks:
-      - web
+      - lescracks_app-net
 
   # ====================== Prometheus ======================
   prometheus-griote:
@@ -87,7 +91,7 @@ services:
     container_name: griote-prometheus
     restart: unless-stopped
     volumes:
-      - ./backend/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./backend/prometheus.yml:/etc/prometheus/prometheus.yml
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prometheus.rule=Host(`prometheus.griote.org`)"
@@ -99,8 +103,7 @@ services:
     depends_on:
       - backend-griote
     networks:
-      - web
-      - griote_internal
+      - lescracks_app-net
 
   # ====================== Grafana ======================
   grafana-griote:
@@ -111,8 +114,8 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./backend/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./backend/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./backend/grafana/provisioning:/etc/grafana/provisioning
+      - ./backend/grafana/dashboards:/var/lib/grafana/dashboards
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.grafana.rule=Host(`grafana.griote.org`)"
@@ -124,19 +127,14 @@ services:
     depends_on:
       - prometheus-griote
     networks:
-      - web
-      - griote_internal
+      - lescracks_app-net
 
 volumes:
   postgres_data:
-    name: griote_postgres_data
   minio_data:
-    name: griote_minio_data
   grafana_data:
-    name: griote_grafana_data
+  backend-logs:
 
 networks:
-  web:
+  lescracks_app-net:
     external: true
-  griote_internal:
-    driver: bridge

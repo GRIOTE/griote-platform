@@ -47,7 +47,6 @@ export default function ExploreDepots() {
         </div>
       </main>
 
-      <Footer />
     </div>
   )
 }

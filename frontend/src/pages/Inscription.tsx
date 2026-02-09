@@ -68,10 +68,7 @@ const Inscription = () => {
 
       setSuccess(true);
       toast.success('Inscription réussie ! Veuillez vérifier votre email.');
-
-      setTimeout(() => {
-        navigate('/connexion');
-      }, 3000);
+      // Note: We no longer auto-redirect. The user needs to verify their email first.
 
     } catch (err: any) {
       // Gestion détaillée des erreurs Joi du backend
@@ -122,162 +119,194 @@ const Inscription = () => {
 
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
+              {/* Message de succès avec lien vers la connexion */}
               {success && (
-                <Alert className="bg-green-50 border-green-200">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <AlertDescription className="text-green-800">
-                    Inscription réussie ! Un email de vérification vous a été envoyé. Vous serez redirigé vers la page de connexion...
-                  </AlertDescription>
-                </Alert>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+                  <div className="flex justify-center mb-4">
+                    <CheckCircle className="h-16 w-16 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-green-800 mb-2">
+                    Inscription réussie !
+                  </h3>
+                  <p className="text-green-700 mb-4">
+                    Un email de vérification a été envoyé à <strong>{formData.email}</strong>.
+                    <br />
+                    Veuillez vérifier votre boîte de réception et valider votre compte.
+                  </p>
+                  <Link
+                    to="/connexion"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-semibold rounded-lg transition-colors duration-300"
+                  >
+                    Aller à la page de connexion
+                  </Link>
+                </div>
               )}
 
-              {error && (
+              {!success && error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
-              {/* Nom et Prénom */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Champs du formulaire - masqués après inscription */}
+              {!success && (
+                <>
+                {/* Nom et Prénom */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName" className="text-blue-800 font-medium">
+                      Prénom
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
+                      <Input
+                        id="firstName"
+                        type="text"
+                        placeholder="Votre prénom"
+                        value={formData.firstName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('firstName', e.target.value)}
+                        className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName" className="text-blue-800 font-medium">
+                      Nom
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
+                      <Input
+                        id="lastName"
+                        type="text"
+                        placeholder="Votre nom"
+                        value={formData.lastName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('lastName', e.target.value)}
+                        className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Email */}
                 <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-blue-800 font-medium">
-                    Prénom
+                  <Label htmlFor="email" className="text-blue-800 font-medium">
+                    Adresse e-mail
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
                     <Input
-                      id="firstName"
-                      type="text"
-                      placeholder="Votre prénom"
-                      value={formData.firstName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('firstName', e.target.value)}
+                      id="email"
+                      type="email"
+                      placeholder="votre@email.com"
+                      value={formData.email}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('email', e.target.value)}
                       className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-blue-800 font-medium">
-                    Nom
-                  </Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
-                    <Input
-                      id="lastName"
-                      type="text"
-                      placeholder="Votre nom"
-                      value={formData.lastName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('lastName', e.target.value)}
-                      className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
-                      required
-                    />
+                {/* Mots de passe */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-blue-800 font-medium">
+                      Mot de passe
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Votre mot de passe"
+                        value={formData.password}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('password', e.target.value)}
+                        className="pl-12 pr-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Min. 8 caractères avec majuscule, minuscule, chiffre et symbole
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-blue-800 font-medium">
+                      Confirmer le mot de passe
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        placeholder="Confirmez votre mot de passe"
+                        value={formData.confirmPassword}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('confirmPassword', e.target.value)}
+                        className="pl-12 pr-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
+                      >
+                        {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Email */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-blue-800 font-medium">
-                  Adresse e-mail
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="votre@email.com"
-                    value={formData.email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('email', e.target.value)}
-                    className="pl-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Mots de passe */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-blue-800 font-medium">
-                    Mot de passe
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
-                    <Input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Votre mot de passe"
-                      value={formData.password}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('password', e.target.value)}
-                      className="pl-12 pr-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    Min. 8 caractères avec majuscule, minuscule, chiffre et symbole
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-blue-800 font-medium">
-                    Confirmer le mot de passe
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
-                    <Input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      placeholder="Confirmez votre mot de passe"
-                      value={formData.confirmPassword}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('confirmPassword', e.target.value)}
-                      className="pl-12 pr-12 border-blue-200 focus:border-yellow-400 focus:ring-yellow-400"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500 hover:text-blue-700"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
+                </>
+              )}
             </CardContent>
 
             <CardFooter className="flex flex-col space-y-4">
-              <Button
-                type="submit"
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-semibold py-3 rounded-lg transition-colors duration-300"
-                disabled={isLoading || success}
-              >
-                {isLoading ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Création du compte...</span>
-                  </div>
-                ) : (
-                  'Créer mon compte'
-                )}
-              </Button>
+              {!success ? (
+                <>
+                  <Button
+                    type="submit"
+                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-semibold py-3 rounded-lg transition-colors duration-300"
+                    disabled={isLoading || success}
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+                        <span>Création du compte...</span>
+                      </div>
+                    ) : (
+                      'Créer mon compte'
+                    )}
+                  </Button>
 
-              <div className="text-center text-sm text-gray-700">
-                Vous avez déjà un compte ?{' '}
-                <Link
-                  to="/connexion"
-                  className="text-primary hover:text-blue-800 font-medium transition-colors"
-                >
-                  Se connecter
-                </Link>
-              </div>
+                  <div className="text-center text-sm text-gray-700">
+                    Vous avez déjà un compte ?{' '}
+                    <Link
+                      to="/connexion"
+                      className="text-primary hover:text-blue-800 font-medium transition-colors"
+                    >
+                      Se connecter
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center text-sm text-gray-600">
+                  <Link
+                    to="/"
+                    className="text-primary hover:text-blue-800 font-medium transition-colors"
+                  >
+                    ← Retour à l'accueil
+                  </Link>
+                </div>
+              )}
             </CardFooter>
           </form>
         </Card>

@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "@/auth/ProtectedRoute";
 import MainLayout from "@/components/Layout/MainLayout";
 
-import MonCompte from "@/pages/MonCompte";
+import Account from "@/pages/Account";
 
 export default function UserRoutes() {
   return (
@@ -13,7 +13,7 @@ export default function UserRoutes() {
           path="/"
           element={
             <ProtectedRoute>
-              <MonCompte />
+              <Account />
             </ProtectedRoute>
           }
         />
@@ -21,3 +21,4 @@ export default function UserRoutes() {
     </Routes>
   );
 }
+

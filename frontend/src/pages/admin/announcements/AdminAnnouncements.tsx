@@ -6,7 +6,6 @@ import {
   deleteAnnouncement,
   publishAnnouncement,
   archiveAnnouncement,
-  uploadAnnouncementImage,
 } from "../../../services/announcement.service";
 
 import type { Announcement } from "../../../types/announcement";
@@ -63,17 +62,14 @@ export default function AdminAnnouncements() {
   // ---------- MUTATIONS ----------
   const createMutation = useMutation({
     mutationFn: async (formData: AnnouncementFormData) => {
-      // 1️⃣ Upload de l'image si fournie
-      const imageId = formData.image
-        ? (await uploadAnnouncementImage(formData.image, "Announcement preview"))
-            .id
-        : undefined;
-
-      // 2️⃣ Création de l'annonce avec l'ID d'image
+      // Upload image if provided and convert to FormData for backend
+      const imageFile = formData.image;
+      
       return createAnnouncement({
         titre: formData.titre,
         contenu: formData.contenu,
-        image_apercu_id: imageId,
+        image: imageFile,
+        image_apercu_id: formData.image_apercu_id,
       });
     },
     onSuccess: () => {
@@ -92,16 +88,13 @@ export default function AdminAnnouncements() {
       titre: string;
       contenu: string;
       image?: File;
+      image_apercu_id?: number;
     }) => {
-      const imageId = payload.image
-        ? (await uploadAnnouncementImage(payload.image, "Announcement preview"))
-            .id
-        : undefined;
-
       return updateAnnouncement(payload.id, {
         titre: payload.titre,
         contenu: payload.contenu,
-        image_apercu_id: imageId,
+        image: payload.image,
+        image_apercu_id: payload.image_apercu_id,
       });
     },
     onSuccess: () => {
@@ -155,7 +148,7 @@ export default function AdminAnnouncements() {
               <Plus className="h-4 w-4 mr-2" /> Nouvelle annonce
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Nouvelle annonce</DialogTitle>
             </DialogHeader>
@@ -206,7 +199,7 @@ export default function AdminAnnouncements() {
       </CardContent>
 
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier l’annonce</DialogTitle>
           </DialogHeader>
@@ -222,6 +215,7 @@ export default function AdminAnnouncements() {
                 updateMutation.mutate({
                   id: selected.announcement_id,
                   ...data,
+                  image_apercu_id: selected.previewImage?.id || data.image_apercu_id,
                 })
               }
             />
