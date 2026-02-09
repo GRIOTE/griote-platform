@@ -17,7 +17,9 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Env files (secrets should be passed via env_file in docker-compose)
-.env
+# Env files
+# NOTE: .env is needed for production build - don't ignore it!
+# Secrets should be passed via env_file in docker-compose
+.env.production.local
 .env.local
 .env.*.local
