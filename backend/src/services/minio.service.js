@@ -78,7 +78,9 @@ async function upload(file, prefix = '') {
     );
 
     const publicUrl = getPublicUrl();
-    return `${publicUrl}/${bucket}/${fileName}`;
+    const fileUrl = `${publicUrl}/${bucket}/${fileName}`;
+    logger.info(`Image uploaded successfully: ${fileUrl}`);
+    return fileUrl;
   } catch (err) {
     logger.error('Erreur upload MinIO', err);
     throw err;

@@ -33,19 +33,39 @@ export async function getAllAnnouncementsForAdmin(): Promise<Announcement[]> {
 }
 
 export async function createAnnouncement(
-  data: CreateAnnouncementData
+  data: CreateAnnouncementData & { image?: File }
 ): Promise<Announcement> {
-  const res = await api.post<Announcement>('/admin/annonces', data);
+  const formData = new FormData();
+  formData.append('titre', data.titre);
+  formData.append('contenu', data.contenu);
+  if (data.image_apercu_id) {
+    formData.append('image_apercu_id', data.image_apercu_id.toString());
+  }
+  if (data.image) {
+    formData.append('file', data.image);
+  }
+
+  const res = await api.post<Announcement>('/admin/annonces', formData);
   return res.data;
 }
 
 export async function updateAnnouncement(
   id: number,
-  data: UpdateAnnouncementData
+  data: UpdateAnnouncementData & { image?: File }
 ): Promise<Announcement> {
+  const formData = new FormData();
+  if (data.titre) formData.append('titre', data.titre);
+  if (data.contenu) formData.append('contenu', data.contenu);
+  if (data.image_apercu_id) {
+    formData.append('image_apercu_id', data.image_apercu_id.toString());
+  }
+  if (data.image) {
+    formData.append('file', data.image);
+  }
+
   const res = await api.put<Announcement>(
     `/admin/annonces/${id}`,
-    data
+    formData
   );
   return res.data;
 }
