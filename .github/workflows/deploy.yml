@@ -44,5 +44,27 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ${{ env.DEPLOY_PATH }}
+            
+            # Backup current environment files
+            cp backend/.env.prod backend/.env.prod.bak 2>/dev/null || true
+            cp backend/.env backend/.env.bak 2>/dev/null || true
+            cp frontend/.env frontend/.env.bak 2>/dev/null || true
+            cp .env .env.bak 2>/dev/null || true
+            
+            # Pull latest code (docker-compose.yml and .env files)
+            git fetch origin main
+            git checkout main
+            git pull origin main
+            
+            # Restore environment files from backup (preserves secrets)
+            cp backend/.env.prod.bak backend/.env.prod 2>/dev/null || true
+            cp backend/.env.bak backend/.env 2>/dev/null || true
+            cp frontend/.env.bak frontend/.env 2>/dev/null || true
+            cp .env.bak .env 2>/dev/null || true
+            
+            # Pull and restart containers
             docker compose -p ${{ env.COMPOSE_PROJECT_NAME }} pull
             docker compose -p ${{ env.COMPOSE_PROJECT_NAME }} up -d --remove-orphans
+            
+            # Cleanup old images
+            docker image prune -f
