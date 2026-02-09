@@ -148,7 +148,7 @@ export default function AdminAnnouncements() {
               <Plus className="h-4 w-4 mr-2" /> Nouvelle annonce
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Nouvelle annonce</DialogTitle>
             </DialogHeader>
@@ -199,7 +199,7 @@ export default function AdminAnnouncements() {
       </CardContent>
 
       <Dialog open={openEdit} onOpenChange={setOpenEdit}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier l’annonce</DialogTitle>
           </DialogHeader>
